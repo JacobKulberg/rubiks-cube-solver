@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://d6x24ssnfh26"]
+
+[ext_resource type="Script" uid="uid://cpa3q0y42o88o" path="res://Entities/Sticker/sticker.gd" id="1_hyy6l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a5nt0"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_a5nt0"]
+material = SubResource("StandardMaterial3D_a5nt0")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hyy6l"]
+
+[node name="Sticker" type="Node3D"]
+script = ExtResource("1_hyy6l")
+
+[node name="StickerMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("QuadMesh_a5nt0")
+surface_material_override/0 = SubResource("StandardMaterial3D_hyy6l")

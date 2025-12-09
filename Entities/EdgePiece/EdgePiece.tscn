@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://bovneab7ctpkx"]
+
+[ext_resource type="Script" uid="uid://cd4klsdodipad" path="res://Entities/EdgePiece/edge_piece.gd" id="1_k03v0"]
+[ext_resource type="PackedScene" uid="uid://dc0q0he6w46pm" path="res://Entities/Cubelet/Cubelet.tscn" id="2_k03v0"]
+[ext_resource type="PackedScene" uid="uid://d6x24ssnfh26" path="res://Entities/Sticker/Sticker.tscn" id="3_gjdox"]
+
+[node name="EdgePiece" type="Node3D"]
+script = ExtResource("1_k03v0")
+
+[node name="Cubelet" parent="." instance=ExtResource("2_k03v0")]
+
+[node name="Sticker1" parent="Cubelet" instance=ExtResource("3_gjdox")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.501, 0)
+
+[node name="Sticker2" parent="Cubelet" instance=ExtResource("3_gjdox")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.501)

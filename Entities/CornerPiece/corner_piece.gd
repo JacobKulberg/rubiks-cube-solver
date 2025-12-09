@@ -26,11 +26,11 @@ var _sticker2_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
 var _sticker3_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
 
 
-func _ready():
+func _ready() -> void:
 	apply_color()
 
 
-func apply_color():
+func apply_color() -> void:
 	var sticker1: Sticker = $Cubelet/Sticker1 as Sticker
 	var sticker2: Sticker = $Cubelet/Sticker2 as Sticker
 	var sticker3: Sticker = $Cubelet/Sticker3 as Sticker

@@ -12,11 +12,11 @@ extends Node3D
 var _sticker1_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
 
 
-func _ready():
+func _ready() -> void:
 	apply_color()
 
 
-func apply_color():
+func apply_color() -> void:
 	var sticker1: Sticker = $Cubelet/Sticker1 as Sticker
 
 	sticker1.set_sticker_color(sticker1_color)

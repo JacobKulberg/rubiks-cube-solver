@@ -21,11 +21,11 @@ enum StickerColor {
 var _sticker_color: StickerColor = StickerColor.WHITE
 
 
-func _ready():
+func _ready() -> void:
 	set_sticker_color(sticker_color)
 
 
-func set_sticker_color(color: StickerColor):
+func set_sticker_color(color: StickerColor) -> void:
 	var mesh: MeshInstance3D = $StickerMesh as MeshInstance3D
 	var mat: StandardMaterial3D = mesh.get_active_material(0).duplicate() as StandardMaterial3D
 	mesh.set_surface_override_material(0, mat)

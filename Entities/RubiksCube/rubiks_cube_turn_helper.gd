@@ -21,7 +21,10 @@ func _init(rubiks_cube: RubiksCube) -> void:
 
 
 func queue_turn(face: String) -> void:
-	if is_turning and turn_queue.size() < max_turns_queued:
+	if is_turning:
+		if turn_queue.size() >= max_turns_queued:
+			return
+
 		turn_queue.push_back(face)
 	else:
 		make_turn(face)

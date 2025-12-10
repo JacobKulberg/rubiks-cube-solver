@@ -1,7 +1,14 @@
 class_name RubiksCube
 extends Node3D
 
+@export var base_duration := 0.15
+@export var min_duration := 0.075
+@export var duration_step := 0.01
+@export var max_moves_queued := 10
+
 var is_rotating := false
+var move_queue := []
+var current_duration := base_duration
 var side_dict := {
 	"X_POS": "X+",
 	"X_NEG": "X-",
@@ -13,12 +20,15 @@ var side_dict := {
 
 
 func _input(event: InputEvent) -> void:
-	var key_event := event as InputEventKey
-	if key_event and key_event.keycode == KEY_SPACE and key_event.pressed:
+	var key_event := event as InputEventMouseButton
+	if key_event and key_event.button_index == MOUSE_BUTTON_LEFT and key_event.pressed:
 		var sides: Array[String] = []
 		sides.assign(side_dict.values())
 		# TODO: this is only random temporarily
-		rotate_side(sides[randi() % sides.size()])
+		if is_rotating and move_queue.size() < max_moves_queued:
+			move_queue.push_back(sides[randi() % sides.size()])
+		else:
+			rotate_side(sides[randi() % sides.size()])
 
 
 func rotate_side(side: String) -> void:
@@ -27,6 +37,15 @@ func rotate_side(side: String) -> void:
 		return
 
 	is_rotating = true
+
+	var target_duration := max(base_duration - duration_step * move_queue.size(), min_duration) as float
+
+	if target_duration < current_duration:
+		current_duration = max(current_duration - duration_step, target_duration)
+	elif target_duration > current_duration:
+		current_duration = min(current_duration + duration_step, target_duration)
+
+	var duration := current_duration
 
 	# get all pieces on side
 	var pieces: Array[Node3D] = []
@@ -56,11 +75,11 @@ func rotate_side(side: String) -> void:
 		"Z":
 			target_rotation.z += rotation_amount
 
-	# rotate smoothly in 0.5s
+	# rotate smoothly
 	var tween := create_tween()
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(rotation_helper, "rotation", target_rotation, 0.5)
+	tween.tween_property(rotation_helper, "rotation", target_rotation, duration)
 	await tween.finished
 
 	# reparent pieces to rubik's cube
@@ -99,3 +118,6 @@ func rotate_side(side: String) -> void:
 			piece.add_to_group("Z-")
 
 	is_rotating = false
+	if move_queue.size() > 0:
+		var next_side = move_queue.pop_front()
+		rotate_side(next_side)

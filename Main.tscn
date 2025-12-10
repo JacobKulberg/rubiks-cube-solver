@@ -17,14 +17,17 @@ glow_enabled = true
 
 [node name="Main" type="Node3D"]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
-shadow_enabled = true
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_r0du0")
 
 [node name="RubiksCube" parent="." instance=ExtResource("1_glv2v")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.6950601, -0.16942169, 0.69870436, 0, 0.97183776, 0.23565099, -0.7189517, -0.1637916, 0.6754856, 4.850951, 3.4728518, 5.16503)
+transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.5778576, -0.7071068, -0.40860704, 0.5770964, 3, 3, 3)
+projection = 1
+current = true
+size = 7.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D"]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 2.9802322e-08, 1.0000001, 0, 0.003229618, -5.1961517)

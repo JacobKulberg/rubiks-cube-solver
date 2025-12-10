@@ -19,6 +19,10 @@ var side_dict := {
 }
 
 
+func _physics_process(delta: float) -> void:
+	self.rotation_degrees.y += delta * 30
+
+
 func _input(event: InputEvent) -> void:
 	var key_event := event as InputEventMouseButton
 	if key_event and key_event.button_index == MOUSE_BUTTON_LEFT and key_event.pressed:

@@ -1,6 +1,6 @@
 @tool
 class_name CenterPiece
-extends Node3D
+extends Piece
 
 @export var sticker1_color: Sticker.StickerColor:
 	get:
@@ -10,10 +10,6 @@ extends Node3D
 		apply_color()
 
 var _sticker1_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
-
-
-func _ready() -> void:
-	apply_color()
 
 
 func apply_color() -> void:

@@ -1,6 +1,6 @@
 @tool
 class_name CornerPiece
-extends Node3D
+extends Piece
 
 @export var sticker1_color: Sticker.StickerColor:
 	get:
@@ -24,10 +24,6 @@ extends Node3D
 var _sticker1_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
 var _sticker2_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
 var _sticker3_color: Sticker.StickerColor = Sticker.StickerColor.WHITE
-
-
-func _ready() -> void:
-	apply_color()
 
 
 func apply_color() -> void:

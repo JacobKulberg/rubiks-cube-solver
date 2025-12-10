@@ -10,7 +10,8 @@ ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
 sky_material = SubResource("ProceduralSkyMaterial_glv2v")
 
 [sub_resource type="Environment" id="Environment_r0du0"]
-background_mode = 2
+background_mode = 1
+background_color = Color(0.728822, 0.728822, 0.728822, 1)
 sky = SubResource("Sky_uu6xs")
 tonemap_mode = 2
 glow_enabled = true
@@ -21,7 +22,6 @@ glow_enabled = true
 environment = SubResource("Environment_r0du0")
 
 [node name="RubiksCube" parent="." instance=ExtResource("1_glv2v")]
-transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.5778576, -0.7071068, -0.40860704, 0.5770964, 3, 3, 3)

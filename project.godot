@@ -22,3 +22,11 @@ gdscript/warnings/untyped_declaration=2
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdscript_formatter/plugin.cfg")
+
+[physics]
+
+common/physics_interpolation=true
+
+[rendering]
+
+anti_aliasing/quality/screen_space_aa=2

@@ -30,7 +30,12 @@ func _input(event: InputEvent) -> void:
 		else:
 			rotate_side(sides[randi() % sides.size()])
 
-		# TODO: quickly scale up and down the cube when clicked
+		# quickly scale up and down the cube when clicked
+		var scale_tween := create_tween()
+		scale_tween.set_ease(Tween.EASE_OUT)
+		scale_tween.set_trans(Tween.TRANS_CUBIC)
+		scale_tween.tween_property(self, "scale", Vector3.ONE * 1.125, 0.05) # magic numbers but whatev
+		scale_tween.tween_property(self, "scale", Vector3.ONE, 0.1)
 
 
 func rotate_side(side: String) -> void:

@@ -7,7 +7,7 @@ extends Node3D
 @export var max_moves_queued := 10
 
 var is_rotating := false
-var move_queue := []
+var move_queue: Array[String] = []
 var current_duration := base_duration
 var side_dict := {
 	"X_POS": "X+",
@@ -30,6 +30,8 @@ func _input(event: InputEvent) -> void:
 		else:
 			rotate_side(sides[randi() % sides.size()])
 
+		# TODO: quickly scale up and down the cube when clicked
+
 
 func rotate_side(side: String) -> void:
 	# dont rotate while rotating
@@ -38,12 +40,18 @@ func rotate_side(side: String) -> void:
 
 	is_rotating = true
 
-	var target_duration := max(base_duration - duration_step * move_queue.size(), min_duration) as float
+	var target_duration := base_duration - duration_step * move_queue.size()
+	if target_duration < min_duration:
+		target_duration = min_duration
 
 	if target_duration < current_duration:
-		current_duration = max(current_duration - duration_step, target_duration)
+		current_duration = current_duration - duration_step
+		if current_duration < target_duration:
+			current_duration = target_duration
 	elif target_duration > current_duration:
-		current_duration = min(current_duration + duration_step, target_duration)
+		current_duration = current_duration + duration_step
+		if current_duration > target_duration:
+			current_duration = target_duration
 
 	var duration := current_duration
 
@@ -119,5 +127,7 @@ func rotate_side(side: String) -> void:
 
 	is_rotating = false
 	if move_queue.size() > 0:
-		var next_side = move_queue.pop_front()
+		var next_side := move_queue[0]
+		move_queue.remove_at(0)
+
 		rotate_side(next_side)

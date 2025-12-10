@@ -15,6 +15,10 @@ run/main_scene="uid://cpbx02m5ghkbh"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdscript_formatter/plugin.cfg")

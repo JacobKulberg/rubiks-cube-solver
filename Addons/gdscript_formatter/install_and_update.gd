@@ -1,6 +1,9 @@
 @tool
 extends Node
 
+signal installation_completed(binary_path: String)
+signal installation_failed(error_message: String)
+
 enum HttpRequestState {
 	IDLE,
 	FETCHING_RELEASE_INFO,
@@ -8,9 +11,6 @@ enum HttpRequestState {
 }
 
 const URL_GITHUB_API_LATEST_RELEASE = "https://api.github.com/repos/gdquest/GDScript-formatter/releases/latest"
-
-signal installation_completed(binary_path: String)
-signal installation_failed(error_message: String)
 
 var http_request_state := HttpRequestState.IDLE
 var http_request: HTTPRequest = HTTPRequest.new()
@@ -58,7 +58,7 @@ func _on_request_completed(
 
 
 func _process_response_latest_release(body: PackedByteArray) -> void:
-	var json = JSON.parse_string(body.get_string_from_utf8())
+	var json: Variant = JSON.parse_string(body.get_string_from_utf8())
 	if not json or not json.has("assets"):
 		var error_message := "Failed to parse release information from GitHub API"
 		push_error(error_message)
@@ -68,8 +68,8 @@ func _process_response_latest_release(body: PackedByteArray) -> void:
 
 	print("GDScript Formatter release information loaded successfully")
 
-	var assets = json["assets"]
-	var tag = json["tag_name"]
+	var assets: Array = json["assets"]
+	var tag: String = json["tag_name"]
 	var download_url := _find_matching_asset(assets, tag)
 
 	if download_url.is_empty():
@@ -159,7 +159,7 @@ func _find_matching_asset(assets: Array, tag: String) -> String:
 		expected_pattern += ".exe"
 	expected_pattern += ".zip"
 
-	for asset in assets:
+	for asset: Variant in assets:
 		var asset_name: String = asset["name"]
 		if asset_name == expected_pattern:
 			return asset["browser_download_url"]
@@ -201,12 +201,12 @@ func _download_and_install_binary(zip_data: PackedByteArray, platform_info: Dict
 	var files := zip_reader.get_files()
 	var binary_data: PackedByteArray
 	var found_binary := false
-	var actual_binary_name := ""
+	var _actual_binary_name := ""
 
 	for file_path in files:
 		if not file_path.ends_with("/"):
 			binary_data = zip_reader.read_file(file_path)
-			actual_binary_name = file_path.get_file()
+			_actual_binary_name = file_path.get_file()
 			found_binary = true
 			break
 

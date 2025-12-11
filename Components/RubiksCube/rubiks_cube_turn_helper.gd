@@ -12,10 +12,6 @@ var is_turning := false
 var turn_queue: Array[Dictionary] = []
 ## History of executed turns, used for undo operations.
 var turn_history: Array[Dictionary] = []
-## Sequential identifier for uniquely tracking turns.
-var next_turn_id := 0
-## Current duration used for ongoing turn animation.
-var current_turn_duration: float
 ## Base duration for a single turn when the queue is empty.
 var base_turn_duration: float
 ## Minimum allowed duration a turn may reach.
@@ -24,6 +20,10 @@ var min_turn_duration: float
 var turn_duration_step: float
 ## Maximum number of turns allowed in the queue.
 var max_turns_queued: int
+## Sequential identifier for uniquely tracking turns.
+var _next_turn_id := 0
+## Current duration used for ongoing turn animation.
+var _current_turn_duration: float
 
 
 ## Initializes the helper using timing configuration from the RubiksCube instance.
@@ -33,7 +33,7 @@ func _init(rubiks_cube: RubiksCube) -> void:
 	min_turn_duration = cube.min_turn_duration
 	turn_duration_step = cube.turn_duration_step
 	max_turns_queued = cube.max_turns_queued
-	current_turn_duration = base_turn_duration
+	_current_turn_duration = base_turn_duration
 
 
 ## Queues a turn or executes it immediately if no turn is currently running.
@@ -58,8 +58,8 @@ func queue_turn(face: String, direction: int = 0, add_to_history: bool = true, i
 
 	# log turn into history
 	if add_to_history:
-		turn_id = next_turn_id
-		next_turn_id += 1
+		turn_id = _next_turn_id
+		_next_turn_id += 1
 		turn_history.push_back(
 			{
 				"face": face,
@@ -149,16 +149,16 @@ func _calculate_turn_duration() -> float:
 	if target_turn_duration < min_turn_duration:
 		target_turn_duration = min_turn_duration
 
-	if target_turn_duration < current_turn_duration:
-		current_turn_duration = current_turn_duration - turn_duration_step
-		if current_turn_duration < target_turn_duration:
-			current_turn_duration = target_turn_duration
-	elif target_turn_duration > current_turn_duration:
-		current_turn_duration = current_turn_duration + turn_duration_step
-		if current_turn_duration > target_turn_duration:
-			current_turn_duration = target_turn_duration
+	if target_turn_duration < _current_turn_duration:
+		_current_turn_duration = _current_turn_duration - turn_duration_step
+		if _current_turn_duration < target_turn_duration:
+			_current_turn_duration = target_turn_duration
+	elif target_turn_duration > _current_turn_duration:
+		_current_turn_duration = _current_turn_duration + turn_duration_step
+		if _current_turn_duration > target_turn_duration:
+			_current_turn_duration = target_turn_duration
 
-	return current_turn_duration
+	return _current_turn_duration
 
 
 ## Returns all cube pieces belonging to a given face group.

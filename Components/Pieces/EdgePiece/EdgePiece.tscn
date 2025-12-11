@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cd4klsdodipad" path="res://Components/Pieces/EdgePiece/edge_piece.gd" id="1_k03v0"]
 [ext_resource type="PackedScene" uid="uid://dc0q0he6w46pm" path="res://Components/Pieces/Cubelet/Cubelet.tscn" id="2_k03v0"]
-[ext_resource type="PackedScene" uid="uid://d6x24ssnfh26" path="res://Components/Sticker/Sticker.tscn" id="3_gjdox"]
+[ext_resource type="PackedScene" uid="uid://drf6bpqqxsmd" path="res://Components/Sticker/Sticker.tscn" id="3_gjdox"]
 
 [node name="EdgePiece" type="Node3D"]
 script = ExtResource("1_k03v0")

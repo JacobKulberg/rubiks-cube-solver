@@ -1,18 +1,46 @@
-[gd_scene load_steps=5 format=3 uid="uid://d6x24ssnfh26"]
+[gd_scene load_steps=6 format=4 uid="uid://drf6bpqqxsmd"]
 
 [ext_resource type="Script" uid="uid://cpa3q0y42o88o" path="res://Components/Sticker/sticker.gd" id="1_hyy6l"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a5nt0"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pi5pe"]
 
-[sub_resource type="QuadMesh" id="QuadMesh_a5nt0"]
-material = SubResource("StandardMaterial3D_a5nt0")
+[sub_resource type="ArrayMesh" id="ArrayMesh_jtva2"]
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 2, 1e-05, 2),
+"format": 34896613377,
+"index_count": 186,
+"index_data": PackedByteArray("AAABAAIAAQADAAQAAAADAAEAAwAFAAYAAwAHAAUABQAHAAgAAAAHAAMABwAJAAoABwALAAkACQALAAwABwANAAsAAAANAAcACwAOAA8ACwANAA4ADgANABAADQARABIADQATABEAEQATABQADQAVABMAEwAWABcAEwAVABYAFgAVABgADQAZABUAAAAZAA0AFQAaABsAFQAcABoAGgAcAB0AFQAZABwAHAAeAB8AHAAZAB4AHgAZACAAIQAAACIAIwAAACEAIwAhACQAJQAAACMAJgAjACcAJQAjACYAJQAmACgAKQAAACUAGQAAACkAKgAlACsALAAlACoAKQAlACwALAAqAC0ALgAsAC8AKQAsAC4AKQAuADAAGQAxADIAMwApADQAGQA1ADEAMQA1ADYAGQApADcAGQA3ADUAOAApADMAOAAzADkANwApADgANQA3ADoANQA6ADsAOgA3ADwANwA4AD0APQA4AD4ANwA9AD8A"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 64,
+"vertex_data": PackedByteArray("AAAAAP8fAAAsAAAAV+MAAAAAAAD/3wAAkAEAAOLpAACzAAAApuYAAEkEAAD/7wAAxAIAAAPtAAA4CAAAaPUAABwGAADO8gAAMA0AAOL5AACWCgAAxvcAAPsSAAA6/QAA/w8AALX7AAD/HwAA//8AAFgZAABL/wAAHBYAAG7+AACnHAAA0v8AAFfjAADS/wAA/98AAP//AADi6QAAbv4AAKbmAABL/wAAaPUAAMb3AAD/7wAAtfsAAAPtAAA6/QAAzvIAAOL5AAD//wAA/98AAOL5AADO8gAAxvcAAGj1AAA6/QAAA+0AALX7AAD/7wAAS/8AAKbmAABu/gAA4ukAANL/AABX4wAAswAAAFgZAAAsAAAApxwAAMQCAAD7EgAAkAEAABwWAACWCgAAOAgAABwGAAAwDQAASQQAAP8PAAA4CAAAlgoAAP/fAAAAAAAA/w8AAEkEAAAwDQAAHAYAABwWAACQAQAA+xIAAMQCAACnHAAALAAAAFgZAACzAAAA/x8AAAAAAADS/wAApxwAAP//AAD/HwAApuYAALMAAABX4wAALAAAAG7+AAAcFgAAS/8AAFgZAADG9wAAlgoAAAPtAADEAgAA4ukAAJABAAC1+wAA/w8AADr9AAD7EgAA4vkAADANAADO8gAAHAYAAP/vAABJBAAAaPUAADgIAAA=")
+}]
+blend_shape_mode = 0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hyy6l"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_tknr6"]
+resource_name = "sticker_StickerMesh"
+_surfaces = [{
+"aabb": AABB(-1, 0, -1, 2, 1e-05, 2),
+"attribute_data": PackedByteArray("AAD/HywAV+MAAP/fkAHi6bMApuZJBP/vxAID7TgIaPUcBs7yMA3i+ZYKxvf7Ejr9/w+1+/8f//9YGUv/HBZu/qcc0v9X49L//9///+Lpbv6m5kv/aPXG9//vtfsD7Tr9zvLi+f///9/i+c7yxvdo9Tr9A+21+//vS/+m5m7+4unS/1fjswBYGSwApxzEAvsSkAEcFpYKOAgcBjANSQT/DzgIlgr/3wAA/w9JBDANHAYcFpAB+xLEAqccLABYGbMA/x8AANL/pxz///8fpuazAFfjLABu/hwWS/9YGcb3lgoD7cQC4umQAbX7/w86/fsS4vkwDc7yHAb/70kEaPU4CA=="),
+"format": 34896613399,
+"index_count": 186,
+"index_data": PackedByteArray("AAABAAIAAQADAAQAAAADAAEAAwAFAAYAAwAHAAUABQAHAAgAAAAHAAMABwAJAAoABwALAAkACQALAAwABwANAAsAAAANAAcACwAOAA8ACwANAA4ADgANABAADQARABIADQATABEAEQATABQADQAVABMAEwAWABcAEwAVABYAFgAVABgADQAZABUAAAAZAA0AFQAaABsAFQAcABoAGgAcAB0AFQAZABwAHAAeAB8AHAAZAB4AHgAZACAAIQAAACIAIwAAACEAIwAhACQAJQAAACMAJgAjACcAJQAjACYAJQAmACgAKQAAACUAGQAAACkAKgAlACsALAAlACoAKQAlACwALAAqAC0ALgAsAC8AKQAsAC4AKQAuADAAGQAxADIAMwApADQAGQA1ADEAMQA1ADYAGQApADcAGQA3ADUAOAApADMAOAAzADkANwApADgANQA3ADoANQA6ADsAOgA3ADwANwA4AD0APQA4AD4ANwA9AD8A"),
+"material": SubResource("StandardMaterial3D_pi5pe"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 64,
+"vertex_data": PackedByteArray("AAAAAP8f/78sAAAAV+P/vwAAAAD/3/+/kAEAAOLp/7+zAAAApub/v0kEAAD/7/+/xAIAAAPt/784CAAAaPX/vxwGAADO8v+/MA0AAOL5/7+WCgAAxvf/v/sSAAA6/f+//w8AALX7/7//HwAA////v1gZAABL//+/HBYAAG7+/7+nHAAA0v//v1fjAADS//+//98AAP///7/i6QAAbv7/v6bmAABL//+/aPUAAMb3/7//7wAAtfv/vwPtAAA6/f+/zvIAAOL5/7///wAA/9//v+L5AADO8v+/xvcAAGj1/786/QAAA+3/v7X7AAD/7/+/S/8AAKbm/79u/gAA4un/v9L/AABX4/+/swAAAFgZ/78sAAAApxz/v8QCAAD7Ev+/kAEAABwW/7+WCgAAOAj/vxwGAAAwDf+/SQQAAP8P/784CAAAlgr/v//fAAAAAP+//w8AAEkE/78wDQAAHAb/vxwWAACQAf+/+xIAAMQC/7+nHAAALAD/v1gZAACzAP+//x8AAAAA/7/S/wAApxz/v///AAD/H/+/puYAALMA/79X4wAALAD/v27+AAAcFv+/S/8AAFgZ/7/G9wAAlgr/vwPtAADEAv+/4ukAAJAB/7+1+wAA/w//vzr9AAD7Ev+/4vkAADAN/7/O8gAAHAb/v//vAABJBP+/aPUAADgI/7/+//9//v//f////3/+//9//f/9f/7//3/+//1//v//f/7//3/+//9//v//f/7//3/+//5/////f/7//3/+//9//v//f////3////9//v//f/7//3/+//9//v//f/7//n/+//9/////f/7//3/9/wCA/v//f/7//n/+//9//f/8f/7//n/+//9//f/7f/7//3////9//v//f/7//n/+//9//f8AgP///3/+//9//f/8f/7//3/+//9/////f/7//3////9//v//f////3////9//v//f/7//3/+//5//v//f/7//3/+//5//v//f/7//n/9//x//v//f/7//3/9/wCA")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_jtva2")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4r7md"]
 
 [node name="Sticker" type="Node3D"]
 script = ExtResource("1_hyy6l")
 
 [node name="StickerMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("QuadMesh_a5nt0")
-surface_material_override/0 = SubResource("StandardMaterial3D_hyy6l")
+transform = Transform3D(0.425, 0, 0, 0, -5.066395e-08, -0.425, 0, 0.425, -5.066395e-08, 0, 0, 0)
+mesh = SubResource("ArrayMesh_tknr6")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4r7md")

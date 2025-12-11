@@ -22,17 +22,12 @@ glow_enabled = true
 environment = SubResource("Environment_r0du0")
 
 [node name="RubiksCube" parent="." instance=ExtResource("1_glv2v")]
-base_turn_duration = null
-min_turn_duration = null
-turn_duration_step = null
-max_turns_queued = null
-rotation_sensitivity = null
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.5778576, -0.7071068, -0.40860704, 0.5770964, 5, 5, 5)
 projection = 1
 current = true
-size = 7.0
+size = 9.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D"]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 2.9802322e-08, 1.0000001, 0, 0, 0)

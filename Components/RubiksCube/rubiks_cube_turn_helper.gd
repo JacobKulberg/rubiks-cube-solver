@@ -41,10 +41,20 @@ func _init(rubiks_cube: RubiksCube) -> void:
 ## [br] [code]face[/code]: The face identifier (e.g. "X+", "Y-", "Z-").
 ## [br] [code]direction[/code]: 1 or -1. If 0, a direction is chosen at random.
 ## [br] [code]add_to_history[/code]: Whether this turn should be added to the undo history.
-func queue_turn(face: String, direction: int = 0, add_to_history: bool = true) -> void:
+## [br] [code]is_half_turn[/code]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.
+func queue_turn(face: String, direction: int = 0, add_to_history: bool = true, is_half_turn: int = 0) -> void:
 	# TODO: this is only random temporarily
 	var turn_direction := direction if direction != 0 else (1 if randi() % 2 == 0 else -1)
 	var turn_id := -1
+
+	var is_half: bool
+	match is_half_turn:
+		-1:
+			is_half = false
+		0:
+			is_half = randi() % 2 == 0
+		1:
+			is_half = true
 
 	# log turn into history
 	if add_to_history:
@@ -55,6 +65,7 @@ func queue_turn(face: String, direction: int = 0, add_to_history: bool = true) -
 				"face": face,
 				"direction": turn_direction,
 				"id": turn_id,
+				"is_half_turn": is_half,
 			},
 		)
 
@@ -72,11 +83,12 @@ func queue_turn(face: String, direction: int = 0, add_to_history: bool = true) -
 				"face": face,
 				"direction": turn_direction,
 				"id": turn_id,
+				"is_half_turn": is_half,
 			},
 		)
 	else:
 		# execute turn immediately
-		_make_turn(face, turn_direction)
+		_make_turn(face, turn_direction, is_half)
 
 
 ## Reverses the most recently executed turn, unless the turn queue is full.
@@ -99,12 +111,14 @@ func undo_last_turn() -> void:
 			turn_queue.remove_at(i)
 			return
 
+	var is_half: int = 1 if last_turn.is_half_turn else -1
+
 	# otherwise queue reversed turn without logging
-	queue_turn(last_turn.face, -last_turn.direction, false)
+	queue_turn(last_turn.face, -last_turn.direction, false, is_half)
 
 
 ## Executes the turn animation and updates cube state when the turn completes.
-func _make_turn(face: String, direction: int) -> void:
+func _make_turn(face: String, direction: int, is_half_turn: bool) -> void:
 	if is_turning:
 		return
 
@@ -113,7 +127,11 @@ func _make_turn(face: String, direction: int) -> void:
 	var turn_duration := _calculate_turn_duration()
 	var pieces := _get_pieces_on_face(face)
 	var turn_helper := _create_turn_helper(pieces)
-	var turn_rotation := _calculate_turn_rotation(face, direction)
+	var turn_rotation := _calculate_turn_rotation(face, direction, is_half_turn)
+
+	# PI/2 < 2.0 < PI
+	if abs(turn_rotation.dot(Vector3.ONE)) > 2.0:
+		turn_duration *= 2
 
 	await _animate_turn(turn_helper, turn_rotation, turn_duration)
 
@@ -162,9 +180,9 @@ func _create_turn_helper(pieces: Array[Node3D]) -> Node3D:
 	return turn_helper
 
 
-## Calculates a rotation vector for applying a 90 degree turn on a face.
-func _calculate_turn_rotation(face: String, direction: int = 0) -> Vector3:
-	var rotation_amount := deg_to_rad(90)
+## Calculates a rotation vector for applying a quarter or half turn.
+func _calculate_turn_rotation(face: String, direction: int, is_half_turn: bool) -> Vector3:
+	var rotation_amount := deg_to_rad(180 if is_half_turn else 90)
 	rotation_amount *= direction
 
 	var turn_rotation := Vector3.ZERO
@@ -230,4 +248,4 @@ func _process_next_turn() -> void:
 	if turn_queue.size() > 0:
 		var next_turn := turn_queue[0]
 		turn_queue.remove_at(0)
-		_make_turn(next_turn.face, next_turn.direction)
+		_make_turn(next_turn.face, next_turn.direction, next_turn.is_half_turn)

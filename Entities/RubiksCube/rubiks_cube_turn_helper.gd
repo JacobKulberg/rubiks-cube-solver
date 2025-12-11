@@ -3,45 +3,92 @@ extends RefCounted
 
 var cube: RubiksCube
 var is_turning := false
-var turn_queue: Array[String] = []
-var current_duration: float
-var base_duration: float
-var min_duration: float
-var duration_step: float
+var turn_queue: Array[Dictionary] = []
+var turn_history: Array[Dictionary] = []
+var next_turn_id := 0
+var current_turn_duration: float
+var base_turn_duration: float
+var min_turn_duration: float
+var turn_duration_step: float
 var max_turns_queued: int
 
 
 func _init(rubiks_cube: RubiksCube) -> void:
 	cube = rubiks_cube
-	base_duration = cube.base_duration
-	min_duration = cube.min_duration
-	duration_step = cube.duration_step
-	max_turns_queued = cube.max_moves_queued
-	current_duration = base_duration
+	base_turn_duration = cube.base_turn_duration
+	min_turn_duration = cube.min_turn_duration
+	turn_duration_step = cube.turn_duration_step
+	max_turns_queued = cube.max_turns_queued
+	current_turn_duration = base_turn_duration
 
 
-func queue_turn(face: String) -> void:
+func queue_turn(face: String, direction: int = 0, add_to_history: bool = true) -> void:
+	# TODO: this is only random temporarily
+	var turn_direction := direction if direction != 0 else (1 if randi() % 2 == 0 else -1)
+	var turn_id := -1
+
+	if add_to_history:
+		turn_id = next_turn_id
+		next_turn_id += 1
+		turn_history.push_back(
+			{
+				"face": face,
+				"direction": turn_direction,
+				"id": turn_id,
+			},
+		)
+
 	if is_turning:
 		if turn_queue.size() >= max_turns_queued:
+			if add_to_history:
+				turn_history.pop_back()
 			return
 
-		turn_queue.push_back(face)
+		turn_queue.push_back(
+			{
+				"face": face,
+				"direction": turn_direction,
+				"id": turn_id,
+			},
+		)
 	else:
-		make_turn(face)
+		_make_turn(face, turn_direction)
 
 
-func make_turn(face: String) -> void:
+func undo_last_turn() -> void:
+	# nothing to undo
+	if turn_history.is_empty():
+		return
+
+	# turn queue is at its upper bound
+	if turn_queue.size() >= max_turns_queued:
+		return
+
+	var last_turn: Dictionary = turn_history.pop_back()
+
+	# check if the last turn is already queued for undoing
+	# if so, remove it from the turn queue (no need to trigger that turn)
+	for i in range(turn_queue.size() - 1, -1, -1):
+		var queued_turn := turn_queue[i]
+		if queued_turn.id == last_turn.id:
+			turn_queue.remove_at(i)
+			return
+
+	queue_turn(last_turn.face, -last_turn.direction, false)
+
+
+func _make_turn(face: String, direction: int) -> void:
 	if is_turning:
 		return
 
 	is_turning = true
 
-	var duration := _calculate_duration()
+	var turn_duration := _calculate_turn_duration()
 	var pieces := _get_pieces_on_face(face)
 	var turn_helper := _create_turn_helper(pieces)
-	var turn_rotation := _calculate_turn_rotation(face)
+	var turn_rotation := _calculate_turn_rotation(face, direction)
 
-	await _animate_turn(turn_helper, turn_rotation, duration)
+	await _animate_turn(turn_helper, turn_rotation, turn_duration)
 
 	_reparent_pieces_to_cube(pieces)
 	turn_helper.queue_free()
@@ -51,21 +98,21 @@ func make_turn(face: String) -> void:
 	_process_next_turn()
 
 
-func _calculate_duration() -> float:
-	var target_duration := base_duration - duration_step * turn_queue.size()
-	if target_duration < min_duration:
-		target_duration = min_duration
+func _calculate_turn_duration() -> float:
+	var target_turn_duration := base_turn_duration - turn_duration_step * turn_queue.size()
+	if target_turn_duration < min_turn_duration:
+		target_turn_duration = min_turn_duration
 
-	if target_duration < current_duration:
-		current_duration = current_duration - duration_step
-		if current_duration < target_duration:
-			current_duration = target_duration
-	elif target_duration > current_duration:
-		current_duration = current_duration + duration_step
-		if current_duration > target_duration:
-			current_duration = target_duration
+	if target_turn_duration < current_turn_duration:
+		current_turn_duration = current_turn_duration - turn_duration_step
+		if current_turn_duration < target_turn_duration:
+			current_turn_duration = target_turn_duration
+	elif target_turn_duration > current_turn_duration:
+		current_turn_duration = current_turn_duration + turn_duration_step
+		if current_turn_duration > target_turn_duration:
+			current_turn_duration = target_turn_duration
 
-	return current_duration
+	return current_turn_duration
 
 
 func _get_pieces_on_face(face: String) -> Array[Node3D]:
@@ -85,11 +132,9 @@ func _create_turn_helper(pieces: Array[Node3D]) -> Node3D:
 	return turn_helper
 
 
-func _calculate_turn_rotation(face: String) -> Vector3:
+func _calculate_turn_rotation(face: String, direction: int = 0) -> Vector3:
 	var rotation_amount := deg_to_rad(90)
-	# TODO: this is only random temporarily
-	if randi() % 2 == 0:
-		rotation_amount *= -1
+	rotation_amount *= direction
 
 	var turn_rotation := Vector3.ZERO
 	match face[0]:
@@ -148,6 +193,6 @@ func _reassign_piece_groups(pieces: Array[Node3D]) -> void:
 
 func _process_next_turn() -> void:
 	if turn_queue.size() > 0:
-		var next_face := turn_queue[0]
+		var next_turn := turn_queue[0]
 		turn_queue.remove_at(0)
-		make_turn(next_face)
+		_make_turn(next_turn.face, next_turn.direction)

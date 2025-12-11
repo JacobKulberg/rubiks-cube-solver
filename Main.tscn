@@ -30,4 +30,4 @@ current = true
 size = 7.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D"]
-transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 2.9802322e-08, 1.0000001, 0, 0.003229618, -5.1961517)
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 2.9802322e-08, 1.0000001, 0, 0, 0)

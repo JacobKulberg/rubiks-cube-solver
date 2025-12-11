@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://bfr1qkn44va13"]
 
-[ext_resource type="PackedScene" uid="uid://dc0q0he6w46pm" path="res://Entities/Pieces/Cubelet/Cubelet.tscn" id="1_j6lqm"]
-[ext_resource type="Script" uid="uid://cief3qpcy5e54" path="res://Entities/RubiksCube/rubiks_cube.gd" id="1_xlehq"]
-[ext_resource type="PackedScene" uid="uid://c0qvh371x2kwr" path="res://Entities/Pieces/CenterPiece/CenterPiece.tscn" id="2_thkmw"]
-[ext_resource type="PackedScene" uid="uid://bovneab7ctpkx" path="res://Entities/Pieces/EdgePiece/EdgePiece.tscn" id="3_o1446"]
-[ext_resource type="PackedScene" uid="uid://bnfsmi0hrxv5t" path="res://Entities/Pieces/CornerPiece/CornerPiece.tscn" id="4_an5dc"]
+[ext_resource type="PackedScene" uid="uid://dc0q0he6w46pm" path="res://Components/Pieces/Cubelet/Cubelet.tscn" id="1_j6lqm"]
+[ext_resource type="Script" uid="uid://cief3qpcy5e54" path="res://Components/RubiksCube/rubiks_cube.gd" id="1_xlehq"]
+[ext_resource type="PackedScene" uid="uid://c0qvh371x2kwr" path="res://Components/Pieces/CenterPiece/CenterPiece.tscn" id="2_thkmw"]
+[ext_resource type="PackedScene" uid="uid://bovneab7ctpkx" path="res://Components/Pieces/EdgePiece/EdgePiece.tscn" id="3_o1446"]
+[ext_resource type="PackedScene" uid="uid://bnfsmi0hrxv5t" path="res://Components/Pieces/CornerPiece/CornerPiece.tscn" id="4_an5dc"]
 
 [node name="RubiksCube" type="Node3D"]
 script = ExtResource("1_xlehq")

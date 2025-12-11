@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cpbx02m5ghkbh"]
 
-[ext_resource type="PackedScene" uid="uid://bfr1qkn44va13" path="res://Entities/RubiksCube/RubiksCube.tscn" id="1_glv2v"]
+[ext_resource type="PackedScene" uid="uid://bfr1qkn44va13" path="res://Components/RubiksCube/RubiksCube.tscn" id="1_glv2v"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_glv2v"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)

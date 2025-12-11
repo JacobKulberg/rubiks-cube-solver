@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://d6x24ssnfh26"]
 
-[ext_resource type="Script" uid="uid://cpa3q0y42o88o" path="res://Entities/Sticker/sticker.gd" id="1_hyy6l"]
+[ext_resource type="Script" uid="uid://cpa3q0y42o88o" path="res://Components/Sticker/sticker.gd" id="1_hyy6l"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a5nt0"]
 

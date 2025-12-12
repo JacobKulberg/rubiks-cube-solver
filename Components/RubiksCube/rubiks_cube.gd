@@ -30,6 +30,7 @@ var is_dragging := false
 var last_mouse_position := Vector2.ZERO
 ## Helper that manages turn queuing, animation, and undo logic.
 var turn_helper: RubiksCubeTurnHelper
+var cube_state: RubiksCubeState
 
 ## Reference to main camera node
 @onready var camera: Camera3D = get_node("../Camera3D")
@@ -38,6 +39,7 @@ var turn_helper: RubiksCubeTurnHelper
 ## Initializes the turn helper.
 func _ready() -> void:
 	turn_helper = RubiksCubeTurnHelper.new(self)
+	cube_state = RubiksCubeState.new()
 
 
 ## Slowly rotates the cube, unless its being dragged.
@@ -82,6 +84,10 @@ func _input(event: InputEvent) -> void:
 
 		rotate(camera.global_transform.basis.y, delta.x * rotation_sensitivity)
 		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
+
+
+func get_current_state() -> RubiksCubeState:
+	return cube_state.copy()
 
 
 ## Plays a brief, pulsing scale animation when the cube is interacted with.

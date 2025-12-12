@@ -8,7 +8,17 @@ extends RefCounted
 var cube: RubiksCube
 ## Whether a turn animation is currently active.
 var is_turning := false
-## Queue of pending turns. Each item is structured like: [br][br] { [br]	[code]face[/code]: [code]String[/code], [br]	[code]direction[/code]: [code]int[/code], [br]	[code]id[/code]: [code]int[/code] [br] }
+## Queue of pending turns. Example:
+## [codeblock]
+## [
+##     {
+##         face: String,
+##         direction: int,
+##         id: int
+##     },
+##     ...
+## ]
+## [/codeblock]
 var turn_queue: Array[Dictionary] = []
 ## History of executed turns, used for undo operations.
 var turn_history: Array[Dictionary] = []
@@ -36,12 +46,12 @@ func _init(rubiks_cube: RubiksCube) -> void:
 	_current_turn_duration = base_turn_duration
 
 
-## Queues a turn or executes it immediately if no turn is currently running.
+## Queues a turn or executes it immediately if no turn is currently running.[br][br]
 ##
-## [br] [code]face[/code]: The face identifier (e.g. "X+", "Y-", "Z-").
-## [br] [code]direction[/code]: 1 or -1. If 0, a direction is chosen at random.
-## [br] [code]add_to_history[/code]: Whether this turn should be added to the undo history.
-## [br] [code]is_half_turn[/code]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.
+## [param face]: The face identifier (e.g. "X+", "Y-", "Z-").[br]
+## [param direction]: 1 or -1. If 0, a direction is chosen at random.[br]
+## [param add_to_history]: Whether this turn should be added to the undo history.[br]
+## [param is_half_turn]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.
 func queue_turn(face: String, direction: int = 0, add_to_history: bool = true, is_half_turn: int = 0) -> void:
 	# TODO: this is only random temporarily
 	var turn_direction := direction if direction != 0 else (1 if randi() % 2 == 0 else -1)

@@ -48,7 +48,13 @@ func _input(event: InputEvent) -> void:
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			var faces := ["R", "L", "U", "D", "F", "B"]
 			# TODO: this is only random temporarily
-			turn_helper.queue_turn(faces[randi() % faces.size()])
+			var suffix := ""
+			match randi() % 3:
+				0:
+					suffix = "'"
+				1:
+					suffix = "2"
+			turn_helper.queue_turn(faces[randi() % faces.size()] + suffix)
 
 			_pulse_scale()
 		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT:

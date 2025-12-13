@@ -30,6 +30,15 @@ var min_turn_duration: float
 var turn_duration_step: float
 ## Maximum number of turns allowed in the queue.
 var max_turns_queued: int
+## Maps face group names to their corresponding identifiers.
+var face_dict: Dictionary[String, String] = {
+	"X+": "B",
+	"X-": "F",
+	"Y+": "U",
+	"Y-": "D",
+	"Z+": "R",
+	"Z-": "L",
+}
 ## Sequential identifier for uniquely tracking turns.
 var _next_turn_id := 0
 ## Current duration used for ongoing turn animation.
@@ -50,9 +59,10 @@ func _init(rubiks_cube: RubiksCube) -> void:
 ##
 ## [param face]: The face identifier (e.g. "X+", "Y-", "Z-").[br]
 ## [param direction]: 1 or -1. If 0, a direction is chosen at random.[br]
+## [param is_half_turn]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.[br]
 ## [param add_to_history]: Whether this turn should be added to the undo history.[br]
-## [param is_half_turn]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.
-func queue_turn(face: String, direction: int = 0, add_to_history: bool = true, is_half_turn: int = 0) -> void:
+## [param ignore_max_size]: Whether the maximum queue size should be accounting for when queuing this turn.
+func queue_turn(face: String, direction: int = 0, is_half_turn: int = 0, add_to_history: bool = true, ignore_max_size: bool = false) -> void:
 	# TODO: this is only random temporarily
 	var turn_direction := direction if direction != 0 else (1 if randi() % 2 == 0 else -1)
 	var turn_id := -1
@@ -82,7 +92,7 @@ func queue_turn(face: String, direction: int = 0, add_to_history: bool = true, i
 	# if another turn is running, queue this one
 	if is_turning:
 		# prevent turn queue from exceeding limit
-		if turn_queue.size() >= max_turns_queued:
+		if not ignore_max_size and turn_queue.size() >= max_turns_queued:
 			# remove from history since turn will not execute
 			if add_to_history:
 				turn_history.pop_back()
@@ -124,7 +134,7 @@ func undo_last_turn() -> void:
 	var is_half: int = 1 if last_turn.is_half_turn else -1
 
 	# otherwise queue reversed turn without logging
-	queue_turn(last_turn.face, -last_turn.direction, false, is_half)
+	queue_turn(last_turn.face, -last_turn.direction, is_half, false)
 
 
 ## Executes the turn animation and updates cube state when the turn completes.
@@ -133,6 +143,15 @@ func _make_turn(face: String, direction: int, is_half_turn: bool) -> void:
 		return
 
 	is_turning = true
+
+	# update cube state
+	var turn_notation := face_dict[face]
+	if is_half_turn:
+		turn_notation += "2"
+	elif direction == -1:
+		turn_notation += "'"
+	cube.state.apply_turn(turn_notation)
+	cube.state.print()
 
 	var turn_duration := _calculate_turn_duration()
 	var pieces := _get_pieces_on_face(face)
@@ -194,6 +213,7 @@ func _create_turn_helper(pieces: Array[Node3D]) -> Node3D:
 func _calculate_turn_rotation(face: String, direction: int, is_half_turn: bool) -> Vector3:
 	var rotation_amount := deg_to_rad(180 if is_half_turn else 90)
 	rotation_amount *= direction
+	rotation_amount *= -int(face[1] + "1")
 
 	var turn_rotation := Vector3.ZERO
 	match face[0]:

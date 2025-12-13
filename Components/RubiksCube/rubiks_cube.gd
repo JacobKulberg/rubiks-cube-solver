@@ -16,13 +16,13 @@ extends Node3D
 @export var rotation_sensitivity := 0.005
 
 ## Maps face identifiers to their corresponding group names.
-var face_dict := {
-	"X_POS": "X+",
-	"X_NEG": "X-",
-	"Y_POS": "Y+",
-	"Y_NEG": "Y-",
-	"Z_POS": "Z+",
-	"Z_NEG": "Z-",
+var face_dict: Dictionary[String, String] = {
+	"B": "X+",
+	"F": "X-",
+	"U": "Y+",
+	"D": "Y-",
+	"R": "Z+",
+	"L": "Z-",
 }
 ## Whether the user is currently dragging with middle mouse button
 var is_dragging := false
@@ -30,27 +30,22 @@ var is_dragging := false
 var last_mouse_position := Vector2.ZERO
 ## Helper that manages turn queuing, animation, and undo logic.
 var turn_helper: RubiksCubeTurnHelper
-var cube_state: RubiksCubeState
+## Logical state of the cube
+var state: RubiksCubeState
 
 ## Reference to main camera node
-@onready var camera: Camera3D = get_node("../Camera3D")
+@onready var camera: Camera3D = get_node("../Camera3D") as Camera3D
 
 
-## Initializes the turn helper.
 func _ready() -> void:
 	turn_helper = RubiksCubeTurnHelper.new(self)
-	cube_state = RubiksCubeState.new()
+	state = RubiksCubeState.new()
 
 
-## Slowly rotates the cube, unless its being dragged.
 func _physics_process(delta: float) -> void:
 	if not is_dragging:
-		rotation_degrees.y += delta * 30
-		if rotation_degrees.y >= 360.0:
-			rotation_degrees.y -= 360.0
-
-		rotation.x = lerp(rotation.x, 0.0, delta)
-		rotation.z = lerp(rotation.z, 0.0, delta * 2.0)
+		rotation.x = lerp(rotation.x, 0.0, delta * 3.0)
+		rotation.z = lerp(rotation.z, 0.0, delta * 3.0)
 
 
 ## Handles input for triggering random turns or undo operations.
@@ -86,8 +81,33 @@ func _input(event: InputEvent) -> void:
 		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
 
 
+## Returns a copy of the current cube state.
 func get_current_state() -> RubiksCubeState:
-	return cube_state.copy()
+	return state.copy()
+
+
+## Parses standard Rubik's Cube notation and queues the turn.
+func execute_turn(turn_notation: String) -> void:
+	var face_letter := turn_notation[0]
+	var face_group := face_dict[face_letter]
+
+	var direction := 1
+	var is_half_turn := -1
+
+	if turn_notation.length() > 1:
+		if turn_notation[1] == "'":
+			direction = -1
+		else:
+			is_half_turn = 1
+
+	turn_helper.queue_turn(face_group, direction, is_half_turn, true, true)
+
+
+## Executes a sequence of turns from a space-separated string.
+func execute_algorithm(turns: String) -> void:
+	var turn_list := turns.split(" ")
+	for turn in turn_list:
+		execute_turn(turn)
 
 
 ## Plays a brief, pulsing scale animation when the cube is interacted with.

@@ -15,15 +15,6 @@ extends Node3D
 ## Sensitivity for mouse rotation
 @export var rotation_sensitivity := 0.005
 
-## Maps face identifiers to their corresponding group names.
-var face_dict: Dictionary[String, String] = {
-	"B": "X+",
-	"F": "X-",
-	"U": "Y+",
-	"D": "Y-",
-	"R": "Z+",
-	"L": "Z-",
-}
 ## Whether the user is currently dragging with middle mouse button
 var is_dragging := false
 ## Last mouse position during drag
@@ -55,8 +46,7 @@ func _input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
 	if mouse_event and mouse_event.pressed:
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			var faces: Array[String] = []
-			faces.assign(face_dict.values())
+			var faces := ["R", "L", "U", "D", "F", "B"]
 			# TODO: this is only random temporarily
 			turn_helper.queue_turn(faces[randi() % faces.size()])
 
@@ -86,28 +76,11 @@ func get_current_state() -> RubiksCubeState:
 	return state.copy()
 
 
-## Parses standard Rubik's Cube notation and queues the turn.
-func execute_turn(turn_notation: String) -> void:
-	var face_letter := turn_notation[0]
-	var face_group := face_dict[face_letter]
-
-	var direction := 1
-	var is_half_turn := -1
-
-	if turn_notation.length() > 1:
-		if turn_notation[1] == "'":
-			direction = -1
-		else:
-			is_half_turn = 1
-
-	turn_helper.queue_turn(face_group, direction, is_half_turn, true, true)
-
-
 ## Executes a sequence of turns from a space-separated string.
 func execute_algorithm(turns: String) -> void:
 	var turn_list := turns.split(" ")
 	for turn in turn_list:
-		execute_turn(turn)
+		turn_helper.queue_turn(turn)
 
 
 ## Plays a brief, pulsing scale animation when the cube is interacted with.

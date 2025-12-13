@@ -13,124 +13,124 @@ script = ExtResource("1_xlehq")
 
 [node name="Core" parent="Pieces" instance=ExtResource("1_j6lqm")]
 
-[node name="CenterPieceW" parent="Pieces" groups=["Y+", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceW" parent="Pieces" groups=["U", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="CenterPieceY" parent="Pieces" groups=["Y-", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceY" parent="Pieces" groups=["D", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(1, 0, 0, 0, -1, 8.742278e-08, 0, -8.742278e-08, -1, 0, -1, 0)
 sticker1_color = 1
 
-[node name="CenterPieceR" parent="Pieces" groups=["Z+", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceR" parent="Pieces" groups=["R", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 1)
 sticker1_color = 2
 
-[node name="CenterPieceO" parent="Pieces" groups=["Z-", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceO" parent="Pieces" groups=["L", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -1)
 sticker1_color = 3
 
-[node name="CenterPieceB" parent="Pieces" groups=["X+", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceB" parent="Pieces" groups=["B", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, 1, 0, 0)
 sticker1_color = 4
 
-[node name="CenterPieceG" parent="Pieces" groups=["X-", "center_piece"] instance=ExtResource("2_thkmw")]
+[node name="CenterPieceG" parent="Pieces" groups=["F", "center_piece"] instance=ExtResource("2_thkmw")]
 transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, -1, 0, 0)
 sticker1_color = 5
 
-[node name="EdgePieceWR" parent="Pieces" groups=["Y+", "Z+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceWR" parent="Pieces" groups=["R", "U", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1)
 sticker2_color = 2
 
-[node name="EdgePieceWO" parent="Pieces" groups=["Y+", "Z-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceWO" parent="Pieces" groups=["L", "U", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1, -1)
 sticker2_color = 3
 
-[node name="EdgePieceWB" parent="Pieces" groups=["X+", "Y+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceWB" parent="Pieces" groups=["B", "U", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1, 1, 0)
 sticker2_color = 4
 
-[node name="EdgePieceWG" parent="Pieces" groups=["X-", "Y+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceWG" parent="Pieces" groups=["F", "U", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -1, 1, 0)
 sticker2_color = 5
 
-[node name="EdgePieceYR" parent="Pieces" groups=["Y-", "Z+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceYR" parent="Pieces" groups=["D", "R", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(1.0000001, 0, 0, 0, -4.3711392e-08, -0.9999999, 0, 1.0000001, -4.3711385e-08, 0, -1, 1)
 sticker1_color = 2
 sticker2_color = 1
 
-[node name="EdgePieceYO" parent="Pieces" groups=["Y-", "Z-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceYO" parent="Pieces" groups=["D", "L", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-1, 8.742278e-08, -3.821371e-15, 0, -4.371139e-08, -1, -8.742278e-08, -1, 4.371139e-08, 0, -1, -1)
 sticker1_color = 3
 sticker2_color = 1
 
-[node name="EdgePieceYB" parent="Pieces" groups=["X+", "Y-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceYB" parent="Pieces" groups=["B", "D", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-4.3711392e-08, 1.0000001, -4.371139e-08, 0, -4.3711392e-08, -1, -1.0000001, -4.3711392e-08, 1.9106855e-15, 1, -1, 0)
 sticker1_color = 4
 sticker2_color = 1
 
-[node name="EdgePieceYG" parent="Pieces" groups=["X-", "Y-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceYG" parent="Pieces" groups=["D", "F", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-4.3711392e-08, -1, 0, -4.3711392e-08, 1.9106855e-15, -1, 1.0000001, -4.371139e-08, -4.371139e-08, -1, -1, 0)
 sticker1_color = 5
 sticker2_color = 1
 
-[node name="EdgePieceRB" parent="Pieces" groups=["X+", "Z+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceRB" parent="Pieces" groups=["B", "R", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 0.99999994, 1, 0, 1)
 sticker1_color = 4
 sticker2_color = 2
 
-[node name="EdgePieceRG" parent="Pieces" groups=["X-", "Z+", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceRG" parent="Pieces" groups=["F", "R", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(1.9106855e-15, -4.371139e-08, -1, -1, -4.371139e-08, 0, -4.371139e-08, 1, -4.371139e-08, -1, 0, 1)
 sticker1_color = 2
 sticker2_color = 5
 
-[node name="EdgePieceOB" parent="Pieces" groups=["X+", "Z-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceOB" parent="Pieces" groups=["B", "L", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(1.9106853e-15, -4.3711385e-08, 1, -0.99999994, -4.3711385e-08, 0, 4.3711385e-08, -0.99999994, -4.371139e-08, 1, 0, -1)
 sticker1_color = 3
 sticker2_color = 4
 
-[node name="EdgePieceOG" parent="Pieces" groups=["X-", "Z-", "edge_piece"] instance=ExtResource("3_o1446")]
+[node name="EdgePieceOG" parent="Pieces" groups=["F", "L", "edge_piece"] instance=ExtResource("3_o1446")]
 transform = Transform3D(4.371139e-08, -1, -8.742278e-08, -1, -4.371139e-08, 0, -3.821371e-15, 8.742278e-08, -1, -1, 0, -1)
 sticker1_color = 5
 sticker2_color = 3
 
-[node name="CornerPieceWRB" parent="Pieces" groups=["X+", "Y+", "Z+", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceWRB" parent="Pieces" groups=["B", "R", "U", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1)
 sticker2_color = 2
 sticker3_color = 4
 
-[node name="CornerPieceWRG" parent="Pieces" groups=["X-", "Y+", "Z+", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceWRG" parent="Pieces" groups=["F", "R", "U", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(-4.3711385e-08, 0, -0.9999999, 0, 1, 0, 0.9999999, 0, -4.3711385e-08, -1, 1, 1)
 sticker2_color = 5
 sticker3_color = 2
 
-[node name="CornerPieceWOB" parent="Pieces" groups=["X+", "Y+", "Z-", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceWOB" parent="Pieces" groups=["B", "L", "U", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(-4.3711385e-08, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -4.3711385e-08, 1, 1, -1)
 sticker2_color = 4
 sticker3_color = 3
 
-[node name="CornerPieceWOG" parent="Pieces" groups=["X-", "Y+", "Z-", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceWOG" parent="Pieces" groups=["F", "L", "U", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(-0.9999999, 0, -8.742277e-08, 0, 1, 0, 8.742277e-08, 0, -0.9999999, -1, 1, -1)
 sticker2_color = 3
 sticker3_color = 5
 
-[node name="CornerPieceYRB" parent="Pieces" groups=["X+", "Y-", "Z+", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceYRB" parent="Pieces" groups=["B", "D", "R", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(4.3711385e-08, 3.821371e-15, 0.99999994, 8.742277e-08, -1, 0, 0.99999994, 8.742278e-08, -4.3711385e-08, 1, -1, 1)
 sticker1_color = 1
 sticker2_color = 4
 sticker3_color = 2
 
-[node name="CornerPieceYRG" parent="Pieces" groups=["X-", "Y-", "Z+", "corner_piece"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceYRG" parent="Pieces" groups=["D", "F", "R", "corner_piece"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(-0.9999999, 8.742278e-08, 0, -8.742277e-08, -1, 0, 0, 0, 0.9999999, -1, -1, 1)
 sticker1_color = 1
 sticker2_color = 2
 sticker3_color = 5
 
-[node name="CornerPieceYOB" parent="Pieces" groups=["X+", "Y-", "Z-"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceYOB" parent="Pieces" groups=["B", "D", "L"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(0.9999998, -8.742277e-08, -8.742276e-08, -8.742276e-08, -0.9999999, 0, -8.742276e-08, 7.642741e-15, -0.9999998, 1, -1, -1)
 sticker1_color = 1
 sticker2_color = 3
 sticker3_color = 4
 
-[node name="CornerPieceYOG" parent="Pieces" groups=["X-", "Y-", "Z-"] instance=ExtResource("4_an5dc")]
+[node name="CornerPieceYOG" parent="Pieces" groups=["D", "F", "L"] instance=ExtResource("4_an5dc")]
 transform = Transform3D(4.3711385e-08, -3.821371e-15, -0.9999998, -8.742277e-08, -1, 0, -0.9999999, 8.742278e-08, -4.371138e-08, -1, -1, -1)
 sticker1_color = 1
 sticker2_color = 5

@@ -14,8 +14,8 @@ extends RefCounted
 ##
 ## [b]Coordinate system:[/b][br]
 ## - White on U (Y+)[br]
-## - Green on F (Z+)[br]
-## - Red   on R (X+)[br][br]
+## - Green on F (X-)[br]
+## - Red on R (Z+)[br][br]
 ##
 ## Corner positions (indices [code]0-7[/code]):
 ## [codeblock]

@@ -2,7 +2,20 @@ class_name RubiksCubeTurnHelper
 extends RefCounted
 ## Helper class that manages Rubik's Cube turns.
 ##
-## Handles turn queuing, animation, undoing, and piece reassignment.
+## Handles turn queuing, animation, undoing, and piece reassignment.[br][br]
+##
+## [b]Coordinate system:[/b][br]
+## - White on U (Y+)[br]
+## - Green on F (X-)[br]
+## - Red on R (Z+)[br][br]
+##
+## [b]Cube orientation:[/b][br]
+## - R: Z+ axis[br]
+## - L: Z- axis[br]
+## - U: Y+ axis[br]
+## - D: Y- axis[br]
+## - F: X- axis[br]
+## - B: X+ axis
 
 ## Reference to the RubiksCube node.
 var cube: RubiksCube
@@ -12,8 +25,7 @@ var is_turning := false
 ## [codeblock]
 ## [
 ##     {
-##         face: String,
-##         direction: int,
+##         turn_notation: String,
 ##         id: int
 ##     },
 ##     ...
@@ -30,15 +42,6 @@ var min_turn_duration: float
 var turn_duration_step: float
 ## Maximum number of turns allowed in the queue.
 var max_turns_queued: int
-## Maps face group names to their corresponding identifiers.
-var face_dict: Dictionary[String, String] = {
-	"X+": "B",
-	"X-": "F",
-	"Y+": "U",
-	"Y-": "D",
-	"Z+": "R",
-	"Z-": "L",
-}
 ## Sequential identifier for uniquely tracking turns.
 var _next_turn_id := 0
 ## Current duration used for ongoing turn animation.
@@ -57,24 +60,12 @@ func _init(rubiks_cube: RubiksCube) -> void:
 
 ## Queues a turn or executes it immediately if no turn is currently running.[br][br]
 ##
-## [param face]: The face identifier (e.g. "X+", "Y-", "Z-").[br]
-## [param direction]: 1 or -1. If 0, a direction is chosen at random.[br]
-## [param is_half_turn]: 1 (is half turn) or -1 (is quarter turn). If 0, this is decided at random.[br]
+## [param turn_notation]: Standard Rubik's Cube notation (R, L, U, D, F, B with optional ' or 2).[br]
 ## [param add_to_history]: Whether this turn should be added to the undo history.[br]
 ## [param ignore_max_size]: Whether the maximum queue size should be accounting for when queuing this turn.
-func queue_turn(face: String, direction: int = 0, is_half_turn: int = 0, add_to_history: bool = true, ignore_max_size: bool = false) -> void:
+func queue_turn(turn_notation: String, add_to_history: bool = true, ignore_max_size: bool = false) -> void:
 	# TODO: this is only random temporarily
-	var turn_direction := direction if direction != 0 else (1 if randi() % 2 == 0 else -1)
 	var turn_id := -1
-
-	var is_half: bool
-	match is_half_turn:
-		-1:
-			is_half = false
-		0:
-			is_half = randi() % 2 == 0
-		1:
-			is_half = true
 
 	# log turn into history
 	if add_to_history:
@@ -82,10 +73,8 @@ func queue_turn(face: String, direction: int = 0, is_half_turn: int = 0, add_to_
 		_next_turn_id += 1
 		turn_history.push_back(
 			{
-				"face": face,
-				"direction": turn_direction,
+				"turn_notation": turn_notation,
 				"id": turn_id,
-				"is_half_turn": is_half,
 			},
 		)
 
@@ -100,15 +89,13 @@ func queue_turn(face: String, direction: int = 0, is_half_turn: int = 0, add_to_
 
 		turn_queue.push_back(
 			{
-				"face": face,
-				"direction": turn_direction,
+				"turn_notation": turn_notation,
 				"id": turn_id,
-				"is_half_turn": is_half,
 			},
 		)
 	else:
 		# execute turn immediately
-		_make_turn(face, turn_direction, is_half)
+		_make_turn(turn_notation)
 
 
 ## Reverses the most recently executed turn, unless the turn queue is full.
@@ -131,25 +118,41 @@ func undo_last_turn() -> void:
 			turn_queue.remove_at(i)
 			return
 
-	var is_half: int = 1 if last_turn.is_half_turn else -1
-
 	# otherwise queue reversed turn without logging
-	queue_turn(last_turn.face, -last_turn.direction, is_half, false)
+	var reversed_notation := _reverse_notation(last_turn.turn_notation)
+	queue_turn(reversed_notation, false)
+
+
+## Returns a [String] in standard Rubik's Cube notation that negates [param turn_notation]
+func _reverse_notation(turn_notation: String) -> String:
+	var face := turn_notation[0]
+
+	if turn_notation.length() == 1:
+		return face + "'"
+	elif turn_notation[1] == "'":
+		return face
+
+	# is a half turn
+	return turn_notation
 
 
 ## Executes the turn animation and updates cube state when the turn completes.
-func _make_turn(face: String, direction: int, is_half_turn: bool) -> void:
+func _make_turn(turn_notation: String) -> void:
 	if is_turning:
 		return
 
 	is_turning = true
 
-	# update cube state
-	var turn_notation := face_dict[face]
-	if is_half_turn:
-		turn_notation += "2"
-	elif direction == -1:
-		turn_notation += "'"
+	var face := turn_notation[0]
+	var direction := 1
+	var is_half_turn := false
+
+	if turn_notation.length() == 2:
+		if turn_notation[1] == "'":
+			direction = -1
+		elif turn_notation[1] == "2":
+			is_half_turn = true
+
 	cube.state.apply_turn(turn_notation)
 	cube.state.print()
 
@@ -213,16 +216,21 @@ func _create_turn_helper(pieces: Array[Node3D]) -> Node3D:
 func _calculate_turn_rotation(face: String, direction: int, is_half_turn: bool) -> Vector3:
 	var rotation_amount := deg_to_rad(180 if is_half_turn else 90)
 	rotation_amount *= direction
-	rotation_amount *= -int(face[1] + "1")
 
 	var turn_rotation := Vector3.ZERO
 	match face[0]:
-		"X":
-			turn_rotation.x += rotation_amount
-		"Y":
-			turn_rotation.y += rotation_amount
-		"Z":
-			turn_rotation.z += rotation_amount
+		"R":
+			turn_rotation.z = -rotation_amount
+		"L":
+			turn_rotation.z = rotation_amount
+		"U":
+			turn_rotation.y = -rotation_amount
+		"D":
+			turn_rotation.y = -rotation_amount
+		"F":
+			turn_rotation.x = rotation_amount
+		"B":
+			turn_rotation.x = -rotation_amount
 
 	return turn_rotation
 
@@ -244,33 +252,32 @@ func _reparent_pieces_to_cube(pieces: Array[Node3D]) -> void:
 
 ## Reassigns each piece to its correct face group based on updated world position.
 func _reassign_piece_groups(pieces: Array[Node3D]) -> void:
-	var face_groups: Array[String] = []
-	face_groups.assign(cube.face_dict.values())
+	var all_faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 
 	for piece in pieces:
 		# remove all face groups
-		for group in face_groups:
-			piece.remove_from_group(group)
+		for face in all_faces:
+			piece.remove_from_group(face)
 
 		var piece_pos: Vector3 = piece.position
 
 		# to avoid floating point precision issues
 		var threshold := 0.9
 
-		if piece_pos.x >= threshold:
-			piece.add_to_group("X+")
-		elif piece_pos.x <= -threshold:
-			piece.add_to_group("X-")
+		if piece_pos.z >= threshold:
+			piece.add_to_group("R")
+		elif piece_pos.z <= -threshold:
+			piece.add_to_group("L")
 
 		if piece_pos.y >= threshold:
-			piece.add_to_group("Y+")
+			piece.add_to_group("U")
 		elif piece_pos.y <= -threshold:
-			piece.add_to_group("Y-")
+			piece.add_to_group("D")
 
-		if piece_pos.z >= threshold:
-			piece.add_to_group("Z+")
-		elif piece_pos.z <= -threshold:
-			piece.add_to_group("Z-")
+		if piece_pos.x >= threshold:
+			piece.add_to_group("B")
+		elif piece_pos.x <= -threshold:
+			piece.add_to_group("F")
 
 
 ## Executes the next queued turn, if one exists.
@@ -278,4 +285,4 @@ func _process_next_turn() -> void:
 	if turn_queue.size() > 0:
 		var next_turn := turn_queue[0]
 		turn_queue.remove_at(0)
-		_make_turn(next_turn.face, next_turn.direction, next_turn.is_half_turn)
+		_make_turn(next_turn.turn_notation)

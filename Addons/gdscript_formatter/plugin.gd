@@ -619,13 +619,12 @@ class CodeEditState:
 	var code_edit: CodeEdit
 
 
-	@warning_ignore("shadowed_variable") func _init(code_edit: CodeEdit) -> void:
-		self.code_edit = code_edit
+	func _init(_code_edit: CodeEdit) -> void:
+		self.code_edit = _code_edit
 		caret_line = code_edit.get_caret_line()
 		caret_column = code_edit.get_caret_column()
 		horizontal_scroll = code_edit.scroll_horizontal
-		@warning_ignore("narrowing_conversion")
-		vertical_scroll = code_edit.scroll_vertical
+		vertical_scroll = int(code_edit.scroll_vertical)
 
 		for line in code_edit.get_breakpointed_lines():
 			breakpoints[line] = code_edit.get_line(line)
@@ -635,18 +634,18 @@ class CodeEditState:
 			folds[line] = code_edit.get_line(line)
 
 
-	@warning_ignore("shadowed_variable") func restore_to_editor(code_edit: CodeEdit) -> void:
-		var new_line_count := code_edit.get_line_count()
+	func restore_to_editor(_code_edit: CodeEdit) -> void:
+		var new_line_count := _code_edit.get_line_count()
 
-		_restore_line_features(breakpoints, code_edit.set_line_as_breakpoint, new_line_count)
-		_restore_line_features(bookmarks, code_edit.set_line_as_bookmarked, new_line_count)
-		_restore_line_features(folds, func(line: int, _is_folded: bool) -> void: code_edit.fold_line(line), new_line_count)
+		_restore_line_features(breakpoints, _code_edit.set_line_as_breakpoint, new_line_count)
+		_restore_line_features(bookmarks, _code_edit.set_line_as_bookmarked, new_line_count)
+		_restore_line_features(folds, func(line: int, _is_folded: bool) -> void: _code_edit.fold_line(line), new_line_count)
 
-		code_edit.set_caret_line(caret_line)
-		code_edit.set_caret_column(caret_column)
+		_code_edit.set_caret_line(caret_line)
+		_code_edit.set_caret_column(caret_column)
 
-		code_edit.scroll_horizontal = horizontal_scroll
-		code_edit.scroll_vertical = vertical_scroll
+		_code_edit.scroll_horizontal = horizontal_scroll
+		_code_edit.scroll_vertical = vertical_scroll
 
 
 	## Restores line-based features (breakpoints, bookmarks, folds) by finding the best matching lines

@@ -21,19 +21,10 @@ extends RefCounted
 var cube: RubiksCube
 ## Whether a turn animation is currently active.
 var is_turning := false
-## Queue of pending turns. Example:
-## [codeblock]
-## [
-##     {
-##         turn_notation: String,
-##         id: int
-##     },
-##     ...
-## ]
-## [/codeblock]
-var turn_queue: Array[Dictionary] = []
+## Queue of pending turns.
+var turn_queue: Array[Turn] = []
 ## History of executed turns, used for undo operations.
-var turn_history: Array[Dictionary] = []
+var turn_history: Array[Turn] = []
 ## Base duration for a single turn when the queue is empty.
 var base_turn_duration: float
 ## Minimum allowed duration a turn may reach.
@@ -64,19 +55,13 @@ func _init(rubiks_cube: RubiksCube) -> void:
 ## [param add_to_history]: Whether this turn should be added to the undo history.[br]
 ## [param ignore_max_size]: Whether the maximum queue size should be accounting for when queuing this turn.
 func queue_turn(turn_notation: String, add_to_history: bool = true, ignore_max_size: bool = false) -> void:
-	# TODO: this is only random temporarily
 	var turn_id := -1
 
 	# log turn into history
 	if add_to_history:
 		turn_id = _next_turn_id
 		_next_turn_id += 1
-		turn_history.push_back(
-			{
-				"turn_notation": turn_notation,
-				"id": turn_id,
-			},
-		)
+		turn_history.push_back(Turn.new(turn_notation, turn_id))
 
 	# if another turn is running, queue this one
 	if is_turning:
@@ -87,12 +72,7 @@ func queue_turn(turn_notation: String, add_to_history: bool = true, ignore_max_s
 				turn_history.pop_back()
 			return
 
-		turn_queue.push_back(
-			{
-				"turn_notation": turn_notation,
-				"id": turn_id,
-			},
-		)
+		turn_queue.push_back(Turn.new(turn_notation, turn_id))
 	else:
 		# execute turn immediately
 		_make_turn(turn_notation)
@@ -108,7 +88,8 @@ func undo_last_turn() -> void:
 	if turn_queue.size() >= max_turns_queued:
 		return
 
-	var last_turn: Dictionary = turn_history.pop_back()
+	var last_turn: Turn = turn_history[-1]
+	turn_history.remove_at(turn_history.size() - 1)
 
 	# check if the last turn is already queued for undoing
 	# if so, remove it from the turn queue (no need to trigger that turn)
@@ -162,7 +143,7 @@ func _make_turn(turn_notation: String) -> void:
 	var turn_rotation := _calculate_turn_rotation(face, direction, is_half_turn)
 
 	# PI/2 < 2.0 < PI
-	if abs(turn_rotation.dot(Vector3.ONE)) > 2.0:
+	if absf(turn_rotation.dot(Vector3.ONE)) > 2.0:
 		turn_duration *= 2
 
 	await _animate_turn(turn_helper, turn_rotation, turn_duration)
@@ -286,3 +267,13 @@ func _process_next_turn() -> void:
 		var next_turn := turn_queue[0]
 		turn_queue.remove_at(0)
 		_make_turn(next_turn.turn_notation)
+
+
+class Turn:
+	var turn_notation: String
+	var id: int
+
+
+	func _init(_turn_notation: String, _id: int = -1) -> void:
+		turn_notation = _turn_notation
+		id = _id

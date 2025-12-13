@@ -35,8 +35,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if not is_dragging:
-		rotation.x = lerp(rotation.x, 0.0, delta * 3.0)
-		rotation.z = lerp(rotation.z, 0.0, delta * 3.0)
+		rotation.x = lerpf(rotation.x, 0.0, delta * 3.0)
+		rotation.z = lerpf(rotation.z, 0.0, delta * 3.0)
 
 
 ## Handles input for triggering random turns or undo operations.
@@ -46,8 +46,8 @@ func _input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
 	if mouse_event and mouse_event.pressed:
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			var faces := ["R", "L", "U", "D", "F", "B"]
 			# TODO: this is only random temporarily
+			var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 			var suffix := ""
 			match randi() % 3:
 				0:

@@ -35,6 +35,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_jtva2")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4r7md"]
+shading_mode = 0
 
 [node name="Sticker" type="Node3D"]
 script = ExtResource("1_hyy6l")

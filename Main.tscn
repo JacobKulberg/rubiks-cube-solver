@@ -11,7 +11,7 @@ sky_material = SubResource("ProceduralSkyMaterial_glv2v")
 
 [sub_resource type="Environment" id="Environment_r0du0"]
 background_mode = 1
-background_color = Color(0.728822, 0.728822, 0.728822, 1)
+background_color = Color(0.12156863, 0.12156863, 0.12156863, 1)
 sky = SubResource("Sky_uu6xs")
 tonemap_mode = 2
 glow_enabled = true
@@ -29,6 +29,3 @@ transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.57785
 projection = 1
 current = true
 size = 9.0
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D"]
-transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 2.9802322e-08, 1.0000001, 0, 0, 0)

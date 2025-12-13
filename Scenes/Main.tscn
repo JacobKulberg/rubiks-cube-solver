@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cpbx02m5ghkbh"]
 
-[ext_resource type="PackedScene" uid="uid://bfr1qkn44va13" path="res://Components/RubiksCube/RubiksCube.tscn" id="1_glv2v"]
+[ext_resource type="PackedScene" uid="uid://bfr1qkn44va13" path="res://Components/RubiksCube/RubiksCube.tscn" id="1_r150o"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_glv2v"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -21,8 +21,9 @@ glow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_r0du0")
 
-[node name="RubiksCube" parent="." instance=ExtResource("1_glv2v")]
+[node name="RubiksCube" parent="." instance=ExtResource("1_r150o")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+base_turn_duration = 0.25
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.5778576, -0.7071068, -0.40860704, 0.5770964, 5, 5, 5)

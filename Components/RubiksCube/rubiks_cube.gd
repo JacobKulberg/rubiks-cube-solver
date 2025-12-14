@@ -12,17 +12,19 @@ extends Node3D
 @export var turn_duration_step := 0.01
 ## Maximum number of turns allowed in the queue.
 @export var max_turns_queued := 10
-## Sensitivity for mouse rotation
+## Sensitivity for mouse rotation.
 @export var rotation_sensitivity := 0.005
 
-## Whether the user is currently dragging with middle mouse button
+## Whether the user is currently dragging with middle mouse button.
 var is_dragging := false
-## Last mouse position during drag
+## Last mouse position during drag.
 var last_mouse_position := Vector2.ZERO
 ## Helper that manages turn queuing, animation, and undo logic.
 var turn_helper: RubiksCubeTurnHelper
-## Logical state of the cube
+## Logical state of the cube.
 var state: RubiksCubeState
+## Thistlethwaite's Algorithm solver instance.
+var thistlethwaite_solver: ThistlethwaiteSolver
 
 ## Reference to main camera node
 @onready var camera: Camera3D = get_node("../Camera3D") as Camera3D
@@ -31,8 +33,10 @@ var state: RubiksCubeState
 func _ready() -> void:
 	turn_helper = RubiksCubeTurnHelper.new(self)
 	state = RubiksCubeState.new()
+	thistlethwaite_solver = ThistlethwaiteSolver.new()
 
 
+## Returns cube to neutral rotation when not being dragged.
 func _physics_process(delta: float) -> void:
 	if not is_dragging:
 		rotation.x = lerpf(rotation.x, 0.0, delta * 3.0)
@@ -76,6 +80,12 @@ func _input(event: InputEvent) -> void:
 		rotate(camera.global_transform.basis.y, delta.x * rotation_sensitivity)
 		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
 
+	var key_event := event as InputEventKey
+	if key_event and key_event.keycode == KEY_SPACE and key_event.is_pressed():
+		var solution := thistlethwaite_solver.solve(get_current_state())
+		print("Solution: ", " ".join(solution))
+		execute_algorithm(" ".join(solution))
+
 
 ## Returns a copy of the current cube state.
 func get_current_state() -> RubiksCubeState:
@@ -84,9 +94,14 @@ func get_current_state() -> RubiksCubeState:
 
 ## Executes a sequence of turns from a space-separated string.
 func execute_algorithm(turns: String) -> void:
+	turns = turns.strip_edges()
+
+	if turns.is_empty():
+		return
+
 	var turn_list := turns.split(" ")
 	for turn in turn_list:
-		turn_helper.queue_turn(turn)
+		turn_helper.queue_turn(turn, true, true)
 
 
 ## Plays a brief, pulsing scale animation when the cube is interacted with.

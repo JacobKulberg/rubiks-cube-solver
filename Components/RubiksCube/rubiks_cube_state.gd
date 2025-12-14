@@ -4,7 +4,7 @@ extends RefCounted
 ##
 ## The current implementation uses [b]cubelet-based representation[/b]:[br][br]
 ##
-## - [b]Permutation arrays[/b] map from [i]positions → cubelet[/i][br]
+## - [b]Permutation arrays[/b] map from [i]positions to cubelets[/i][br]
 ## - [b]Orientation arrays[/b] store orientation [i]per cubelet[/i], not per position[br][br]
 ##
 ## This means:[br]
@@ -237,6 +237,18 @@ func apply_turn(face: String) -> void:
 
 			_cycle_pieces(corner_indices, edge_indices)
 			_cycle_pieces(corner_indices, edge_indices)
+
+
+## Applies a sequence of face turns to the cube state from a space-separated string.[br][br]
+func apply_turns(turns: String) -> void:
+	turns = turns.strip_edges()
+
+	if turns.is_empty():
+		return
+
+	var turn_list := turns.split(" ")
+	for turn in turn_list:
+		apply_turn(turn)
 
 
 ## Returns a deep copy of this cube state.[br][br]

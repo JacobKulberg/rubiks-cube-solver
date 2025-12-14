@@ -18,6 +18,8 @@ config/icon="uid://ccvr3rbx38dpu"
 [debug]
 
 gdscript/warnings/untyped_declaration=2
+gdscript/warnings/integer_division=0
+gdscript/warnings/confusable_local_declaration=0
 
 [editor_plugins]
 

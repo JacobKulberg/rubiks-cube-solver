@@ -3,6 +3,7 @@
 /android/
 .vscode/
 
+*.dat
 *.tmp
 
 export_presets.cfg

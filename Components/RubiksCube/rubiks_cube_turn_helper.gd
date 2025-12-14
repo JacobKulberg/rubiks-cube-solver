@@ -135,7 +135,6 @@ func _make_turn(turn_notation: String) -> void:
 			is_half_turn = true
 
 	cube.state.apply_turn(turn_notation)
-	cube.state.print()
 
 	var turn_duration := _calculate_turn_duration()
 	var pieces := _get_pieces_on_face(face)
@@ -207,7 +206,7 @@ func _calculate_turn_rotation(face: String, direction: int, is_half_turn: bool) 
 		"U":
 			turn_rotation.y = -rotation_amount
 		"D":
-			turn_rotation.y = -rotation_amount
+			turn_rotation.y = rotation_amount
 		"F":
 			turn_rotation.x = rotation_amount
 		"B":

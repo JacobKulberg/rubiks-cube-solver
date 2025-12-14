@@ -14,12 +14,12 @@ extends RefCounted
 ##
 ## Returns a sequence of turns that orients all edges.[br]
 ## Uses all turns in the set {L, R, F, B, U, D}
-func solve_phase0(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
+func solve_phase0(state: RubiksCubeState, table: Dictionary[String, int]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 
 	while true:
-		var current_coord := ThistlethwaiteCoordinates.get_edge_orientation_coord(current_state)
+		var current_coord := ThistlethwaiteCoordinates.get_phase0_coord(current_state)
 		var current_depth: int = table.get(current_coord, -1)
 
 		# goal state reached
@@ -30,7 +30,7 @@ func solve_phase0(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[
 		for turn: String in ThistlethwaiteCoordinates.G0_TURNS:
 			var test_state := current_state.copy()
 			test_state.apply_turn(turn)
-			var new_coord := ThistlethwaiteCoordinates.get_edge_orientation_coord(test_state)
+			var new_coord := ThistlethwaiteCoordinates.get_phase0_coord(test_state)
 			var new_depth: int = table.get(new_coord, -1)
 
 			# greedy: take first move that reduces depth (local optimum)
@@ -54,7 +54,7 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary[String, int]) -> Arr
 	var current_state := state.copy()
 
 	while true:
-		var current_coord := _get_phase1_coord(current_state)
+		var current_coord := ThistlethwaiteCoordinates.get_phase1_coord(current_state)
 		var current_depth: int = table.get(current_coord, -1)
 
 		# goal state reached
@@ -65,7 +65,7 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary[String, int]) -> Arr
 		for turn: String in ThistlethwaiteCoordinates.G1_TURNS:
 			var test_state := current_state.copy()
 			test_state.apply_turn(turn)
-			var new_coord := _get_phase1_coord(test_state)
+			var new_coord := ThistlethwaiteCoordinates.get_phase1_coord(test_state)
 			var new_depth: int = table.get(new_coord, -1)
 
 			# greedy: take first move that reduces depth (local optimum)
@@ -75,10 +75,3 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary[String, int]) -> Arr
 				break
 
 	return solution_turns
-
-
-## Returns the G1 coordinate composed of the corner orientation and E-slice position coordinates.
-func _get_phase1_coord(state: RubiksCubeState) -> String:
-	var corner_coord := ThistlethwaiteCoordinates.get_corner_orientation_coord(state)
-	var e_slice_coord := ThistlethwaiteCoordinates.get_e_slice_coord(state)
-	return "%d_%d" % [corner_coord, e_slice_coord]

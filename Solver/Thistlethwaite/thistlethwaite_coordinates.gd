@@ -12,13 +12,26 @@ const G0_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U
 const G1_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "F", "F'", "F2", "B", "B'", "B2"]
 
 
+## Returns the G0 coordinate composed of the edge orientation coordinate.
+static func get_phase0_coord(state: RubiksCubeState) -> String:
+	var edge_coord := _get_edge_orientation_coord(state)
+	return "%d" % edge_coord
+
+
+## Returns the G1 coordinate composed of the corner orientation and E-slice position coordinates.
+static func get_phase1_coord(state: RubiksCubeState) -> String:
+	var corner_coord := _get_corner_orientation_coord(state)
+	var e_slice_coord := _get_e_slice_coord(state)
+	return "%d_%d" % [corner_coord, e_slice_coord]
+
+
 ## Returns the edge orientation coordinate for phase G0 (0-2047).[br][br]
 ##
 ## Encodes the orientation of the first 11 edges as a binary number.[br]
 ## The 12th edge orientation is determined by parity and is not stored.[br][br]
 ##
 ## Used to reduce G0 to G1.
-static func get_edge_orientation_coord(state: RubiksCubeState) -> int:
+static func _get_edge_orientation_coord(state: RubiksCubeState) -> int:
 	var sum := 0
 	for i in range(11):
 		sum += state.edge_orientations[state.edge_permutations[i]] * (1 << i)
@@ -31,7 +44,7 @@ static func get_edge_orientation_coord(state: RubiksCubeState) -> int:
 ## The 8th corner orientation is determined by mod-3 parity and is not stored.[br][br]
 ##
 ## Used to reduce G1 to G2.
-static func get_corner_orientation_coord(state: RubiksCubeState) -> int:
+static func _get_corner_orientation_coord(state: RubiksCubeState) -> int:
 	var sum := 0
 	for i in range(7):
 		sum += state.corner_orientations[state.corner_permutations[i]] * (3 ** i)
@@ -43,7 +56,7 @@ static func get_corner_orientation_coord(state: RubiksCubeState) -> int:
 ## Encodes which 4 of the 12 edge positions contain E-slice edges (FL, FR, BL, BR)[br][br]
 ##
 ## Used to reduce G1 to G2.
-static func get_e_slice_coord(state: RubiksCubeState) -> int:
+static func _get_e_slice_coord(state: RubiksCubeState) -> int:
 	var e_edges := [state.EDGE.FL, state.EDGE.FR, state.EDGE.BL, state.EDGE.BR]
 	var positions_with_e_edges: Array[int] = []
 

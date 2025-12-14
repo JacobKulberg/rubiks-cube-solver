@@ -14,7 +14,7 @@ extends RefCounted
 ##
 ## Returns a sequence of turns that orients all edges.[br]
 ## Uses all turns in the set {L, R, F, B, U, D}
-func solve_phase0(state: RubiksCubeState, table: Dictionary) -> Array[String]:
+func solve_phase0(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 
@@ -27,7 +27,7 @@ func solve_phase0(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 			break
 
 		# try all 18 turns, choose first that reduces depth
-		for turn: String in ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2"]:
+		for turn: String in ThistlethwaiteCoordinates.G0_TURNS:
 			var test_state := current_state.copy()
 			test_state.apply_turn(turn)
 			var new_coord := ThistlethwaiteCoordinates.get_edge_orientation_coord(test_state)
@@ -44,12 +44,12 @@ func solve_phase0(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 
 ## Reduces G1 to G2 (orients all corners and correctly places E-slice).[br][br]
 ##
-## [param state]: Current sube state (this state will be modified)[br]
+## [param state]: Current cube state (this state will be modified)[br]
 ## [param table]: Precomputed G1 table (coordinates map to depth)[br][br]
 ##
 ## Returns a sequence of turns that orients all corners and correctly places E-slice edges in the E-slice.[br]
 ## Uses all turns in the set {L, R, F, B, U2, D2}
-func solve_phase1(state: RubiksCubeState, table: Dictionary) -> Array[String]:
+func solve_phase1(state: RubiksCubeState, table: Dictionary[String, int]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 
@@ -62,7 +62,7 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 			break
 
 		# try all 14 turns (to preserve edge orientation from G0), choose first that reduces depth
-		for turn: String in ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "F", "F'", "F2", "B", "B'", "B2"]:
+		for turn: String in ThistlethwaiteCoordinates.G1_TURNS:
 			var test_state := current_state.copy()
 			test_state.apply_turn(turn)
 			var new_coord := _get_phase1_coord(test_state)

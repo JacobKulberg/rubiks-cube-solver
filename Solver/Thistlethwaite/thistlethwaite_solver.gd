@@ -10,8 +10,8 @@ var phase1_table: Dictionary
 
 ## Loads lookup tables from disk.
 func _init() -> void:
-	phase0_table = load_table("res://Solver/Thistlethwaite/Tables/phase0_table.dat")
-	phase1_table = load_table("res://Solver/Thistlethwaite/Tables/phase1_table.dat")
+	phase0_table = load_table("res://Solver/Thistlethwaite/Tables/phase0_table.dat") as Dictionary[int, int]
+	phase1_table = load_table("res://Solver/Thistlethwaite/Tables/phase1_table.dat") as Dictionary[String, int]
 
 
 ## Solves the cube using Thistlethwaite's Algorithm.[br][br]

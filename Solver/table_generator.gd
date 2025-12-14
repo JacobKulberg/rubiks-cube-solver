@@ -14,7 +14,7 @@ extends RefCounted
 ##
 ## [param table]: [Dictionary] mapping coordinates to depths ([int] to [int] [u]or[/u] [String] to [int]).[br]
 ## [param filepath]: Path where the table will be saved (e.g. "res://Solver/Tables/phase0.dat").
-func save_table(table: Dictionary, filepath: String) -> void:
+func save_table(table: Dictionary[Variant, int], filepath: String) -> void:
 	var file := FileAccess.open(filepath, FileAccess.WRITE)
 	if file == null:
 		push_error("Failed to open file for writing: " + filepath)
@@ -41,13 +41,13 @@ func save_table(table: Dictionary, filepath: String) -> void:
 ## Loads a lookup table from a binary file.[br][br]
 ##
 ## [param filepath]: Path where the table is saved (e.g. "res://Solver/Tables/phase0.dat").
-func load_table(filepath: String) -> Dictionary:
+func load_table(filepath: String) -> Dictionary[Variant, int]:
 	var file := FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		push_error("Failed to open file for reading: " + filepath)
 		return { }
 
-	var table: Dictionary = { }
+	var table: Dictionary[Variant, int] = { }
 
 	# read table size
 	var size := file.get_32()

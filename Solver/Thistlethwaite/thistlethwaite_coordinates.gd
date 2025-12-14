@@ -6,6 +6,11 @@ extends RefCounted
 ## a subset of the cube's configurations. These coordinates are used as keys in
 ## lookup tables generated via BFS.
 
+## The 18 turns allowed in phase G0
+const G0_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2"]
+## The 14 turns allowed in phase G1
+const G1_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "F", "F'", "F2", "B", "B'", "B2"]
+
 
 ## Returns the edge orientation coordinate for phase G0 (0-2047).[br][br]
 ##
@@ -64,7 +69,7 @@ static func get_e_slice_coord(state: RubiksCubeState) -> int:
 				index += 1
 				continue
 
-			r = min(r, n - r)
+			r = mini(r, n - r)
 
 			# calculate binomial coefficient
 			var binom := 1

@@ -13,9 +13,9 @@ extends TableGenerator
 ## Uses all 18 turns. Expected size: 2048 states, max depth: 7.[br][br]
 ##
 ## Returns a [Dictionary] mapping edge orientation coordinates to search depth.
-func generate_phase0_table() -> Dictionary:
+func generate_phase0_table() -> Dictionary[int, int]:
 	var table: Dictionary[int, int] = { }
-	var queue: Array = []
+	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
 	var solved_state := RubiksCubeState.new()
@@ -25,14 +25,15 @@ func generate_phase0_table() -> Dictionary:
 	queue.push_back(solved_state)
 
 	# allow all 18 turns
-	var valid_turns: Array[String] = ["R", "L", "U", "D", "F", "B", "R'", "L'", "U'", "D'", "F'", "B'", "R2", "L2", "U2", "D2", "F2", "B2"]
+	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G0_TURNS
 
 	print_rich("[b]Generating[/b] G0 → G1 table...")
 	var start_time := Time.get_ticks_msec()
 
 	# BFS: explore all reachable states level by level
 	while not queue.is_empty():
-		var current_state: RubiksCubeState = queue.pop_front()
+		var current_state: RubiksCubeState = queue[0]
+		queue.remove_at(0)
 		var current_coord := ThistlethwaiteCoordinates.get_edge_orientation_coord(current_state)
 		var current_depth: int = table[current_coord]
 
@@ -59,9 +60,9 @@ func generate_phase0_table() -> Dictionary:
 ## Uses 14 turns. Expected size: 1082565 states, max depth: 10.[br][br]
 ##
 ## Returns a [Dictionary] mapping corner orientation and E-slice position coordinates to search depth.
-func generate_phase1_table() -> Dictionary:
+func generate_phase1_table() -> Dictionary[String, int]:
 	var table: Dictionary[String, int] = { }
-	var queue: Array = []
+	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
 	var solved_state := RubiksCubeState.new()
@@ -71,14 +72,15 @@ func generate_phase1_table() -> Dictionary:
 	queue.push_back(solved_state)
 
 	# only allow turns that preserve edge orientation
-	var valid_turns: Array[String] = ["R", "L", "F", "B", "R'", "L'", "F'", "B'", "R2", "L2", "U2", "D2", "F2", "B2"]
+	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G1_TURNS
 
 	print_rich("[b]Generating[/b] G1 → G2 table...")
 	var start_time := Time.get_ticks_msec()
 
 	# BFS explore all reachable states level by level
 	while not queue.is_empty():
-		var current_state: RubiksCubeState = queue.pop_front()
+		var current_state: RubiksCubeState = queue[0]
+		queue.remove_at(0)
 		var current_coord := _get_phase1_coord(current_state)
 		var current_depth: int = table[current_coord]
 
@@ -125,9 +127,9 @@ func _get_phase1_coord(state: RubiksCubeState) -> String:
 
 
 ## Returns the maximum depth-value in a given lookup table.
-func _get_max_depth(table: Dictionary) -> int:
+func _get_max_depth(table: Dictionary[Variant, int]) -> int:
 	var max_depth := 0
-	for depth: int in table.values():
+	for depth in table.values() as Array[int]:
 		if depth > max_depth:
 			max_depth = depth
 	return max_depth

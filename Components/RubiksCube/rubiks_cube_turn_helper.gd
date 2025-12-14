@@ -157,18 +157,12 @@ func _make_turn(turn_notation: String) -> void:
 
 ## Adjusts turn animation duration based on queue size for smooth speed up behavior.
 func _calculate_turn_duration() -> float:
-	var target_turn_duration := base_turn_duration - turn_duration_step * turn_queue.size()
-	if target_turn_duration < min_turn_duration:
-		target_turn_duration = min_turn_duration
+	var target_turn_duration := maxf(base_turn_duration - turn_duration_step * turn_queue.size(), min_turn_duration)
 
 	if target_turn_duration < _current_turn_duration:
-		_current_turn_duration = _current_turn_duration - turn_duration_step
-		if _current_turn_duration < target_turn_duration:
-			_current_turn_duration = target_turn_duration
+		_current_turn_duration = maxf(_current_turn_duration - turn_duration_step, target_turn_duration)
 	elif target_turn_duration > _current_turn_duration:
-		_current_turn_duration = _current_turn_duration + turn_duration_step
-		if _current_turn_duration > target_turn_duration:
-			_current_turn_duration = target_turn_duration
+		_current_turn_duration = minf(_current_turn_duration + turn_duration_step, target_turn_duration)
 
 	return _current_turn_duration
 

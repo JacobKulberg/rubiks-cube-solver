@@ -13,16 +13,16 @@ const G1_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "
 
 
 ## Returns the G0 coordinate composed of the edge orientation coordinate.
-static func get_phase0_coord(state: RubiksCubeState) -> String:
+static func get_phase0_coord(state: RubiksCubeState) -> int:
 	var edge_coord := _get_edge_orientation_coord(state)
-	return "%d" % edge_coord
+	return edge_coord
 
 
 ## Returns the G1 coordinate composed of the corner orientation and E-slice position coordinates.
-static func get_phase1_coord(state: RubiksCubeState) -> String:
+static func get_phase1_coord(state: RubiksCubeState) -> int:
 	var corner_coord := _get_corner_orientation_coord(state)
 	var e_slice_coord := _get_e_slice_coord(state)
-	return "%d_%d" % [corner_coord, e_slice_coord]
+	return corner_coord * 495 + e_slice_coord
 
 
 ## Returns the edge orientation coordinate for phase G0 (0-2047).[br][br]

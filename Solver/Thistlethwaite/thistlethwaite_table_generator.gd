@@ -16,12 +16,12 @@ func generate_all_tables() -> void:
 
 	# Generate and save G0 table
 	var phase0_table := generate_phase0_table()
-	print("Max depth: %d\n" % _get_max_depth(phase0_table))
+	print("Max depth: %d turns\n" % _get_max_depth(phase0_table))
 	save_table(phase0_table, "res://Solver/Thistlethwaite/Tables/phase0_table.dat")
 
 	# Generate and save G1 table
 	var phase1_table := generate_phase1_table()
-	print("Max depth: %d\n" % _get_max_depth(phase1_table))
+	print("Max depth: %d turns\n" % _get_max_depth(phase1_table))
 	save_table(phase1_table, "res://Solver/Thistlethwaite/Tables/phase1_table.dat")
 
 
@@ -31,8 +31,8 @@ func generate_all_tables() -> void:
 ## Uses all 18 turns. Expected size: 2048 states, max depth: 7.[br][br]
 ##
 ## Returns a [Dictionary] mapping edge orientation coordinates to search depth.
-func generate_phase0_table() -> Dictionary[String, int]:
-	var table: Dictionary[String, int] = { }
+func generate_phase0_table() -> Dictionary[int, int]:
+	var table: Dictionary[int, int] = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -66,6 +66,9 @@ func generate_phase0_table() -> Dictionary[String, int]:
 				table[next_coord] = current_depth + 1
 				queue.push_back(next_state)
 
+				if table.size() % 100 == 0:
+					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 2048.0 * 100])
+
 	print_rich("G0 → G1 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
 	print("Size: %d states" % table.size())
 
@@ -78,8 +81,8 @@ func generate_phase0_table() -> Dictionary[String, int]:
 ## Uses 14 turns. Expected size: 1082565 states, max depth: 10.[br][br]
 ##
 ## Returns a [Dictionary] mapping corner orientation and E-slice position coordinates to search depth.
-func generate_phase1_table() -> Dictionary[String, int]:
-	var table: Dictionary[String, int] = { }
+func generate_phase1_table() -> Dictionary[int, int]:
+	var table: Dictionary[int, int] = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -113,6 +116,9 @@ func generate_phase1_table() -> Dictionary[String, int]:
 				table[next_coord] = current_depth + 1
 				queue.push_back(next_state)
 
+				if table.size() % 10000 == 0:
+					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 1082565.0 * 100])
+
 	print_rich("G1 → G2 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
 	print("Size: %d states" % table.size())
 
@@ -120,7 +126,7 @@ func generate_phase1_table() -> Dictionary[String, int]:
 
 
 ## Returns the maximum depth-value in a given lookup table.
-func _get_max_depth(table: Dictionary[String, int]) -> int:
+func _get_max_depth(table: Dictionary[int, int]) -> int:
 	var max_depth := 0
 	for depth in table.values() as Array[int]:
 		if depth > max_depth:

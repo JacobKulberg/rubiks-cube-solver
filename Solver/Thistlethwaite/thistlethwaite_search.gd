@@ -14,7 +14,7 @@ extends RefCounted
 ##
 ## Returns a sequence of turns that orients all edges.[br]
 ## Uses all turns in the set {L, R, F, B, U, D}
-func solve_phase0(state: RubiksCubeState, table: Dictionary[String, int]) -> Array[String]:
+func solve_phase0(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 
@@ -49,7 +49,7 @@ func solve_phase0(state: RubiksCubeState, table: Dictionary[String, int]) -> Arr
 ##
 ## Returns a sequence of turns that orients all corners and correctly places E-slice edges in the E-slice.[br]
 ## Uses all turns in the set {L, R, F, B, U2, D2}
-func solve_phase1(state: RubiksCubeState, table: Dictionary[String, int]) -> Array[String]:
+func solve_phase1(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 

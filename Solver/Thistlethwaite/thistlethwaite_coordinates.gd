@@ -21,7 +21,7 @@ static func get_phase0_coord(state: RubiksCubeState) -> int:
 ## Returns the G1 coordinate composed of the corner orientation and E-slice position coordinates.
 static func get_phase1_coord(state: RubiksCubeState) -> int:
 	var corner_coord := _get_corner_orientation_coord(state)
-	var e_slice_coord := _get_e_slice_coord(state)
+	var e_slice_coord := _get_m_slice_coord(state)
 	return corner_coord * 495 + e_slice_coord
 
 
@@ -51,28 +51,28 @@ static func _get_corner_orientation_coord(state: RubiksCubeState) -> int:
 	return sum
 
 
-## Returns the E-slice position coordinate for phase G1 (0-494).[br][br]
+## Returns the M-slice position coordinate for phase G1 (0-494).[br][br]
 ##
-## Encodes which 4 of the 12 edge positions contain E-slice edges (FL, FR, BL, BR)[br][br]
+## Encodes which 4 of the 12 edge positions contain M-slice edges (UF, UB, DF, DB)[br][br]
 ##
 ## Used to reduce G1 to G2.
-static func _get_e_slice_coord(state: RubiksCubeState) -> int:
-	var e_edges := [state.EDGE.FL, state.EDGE.FR, state.EDGE.BL, state.EDGE.BR]
-	var positions_with_e_edges: Array[int] = []
+static func _get_m_slice_coord(state: RubiksCubeState) -> int:
+	var m_edges := [state.EDGE.UF, state.EDGE.UB, state.EDGE.DF, state.EDGE.DB]
+	var positions_with_m_edges: Array[int] = []
 
-	# find which positions contain E-slice edges
+	# find which positions contain M-slice edges
 	for i in range(12):
-		if state.edge_permutations[i] in e_edges:
-			positions_with_e_edges.push_back(i)
+		if state.edge_permutations[i] in m_edges:
+			positions_with_m_edges.push_back(i)
 
-	positions_with_e_edges.sort()
+	positions_with_m_edges.sort()
 	var index := 0
 
 	# convert to combinatorial index using binomial coefficients
 	# encodes 4 edges from 12 = C(12, 4) = 495 combinations
 	for i in range(4):
-		var start := 0 if i == 0 else positions_with_e_edges[i - 1] + 1
-		for j in range(start, positions_with_e_edges[i]):
+		var start := 0 if i == 0 else positions_with_m_edges[i - 1] + 1
+		for j in range(start, positions_with_m_edges[i]):
 			var n := 12 - j - 1
 			var r := 4 - i - 1
 			index += _choose(n, r)

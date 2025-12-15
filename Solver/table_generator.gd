@@ -1,5 +1,5 @@
 class_name TableGenerator
-extends Node
+extends RefCounted
 ## Utility class for saving and loading lookup tables.
 ##
 ## Uses a binary format that supports [int] and [String] keys.

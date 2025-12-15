@@ -85,6 +85,8 @@ func _input(event: InputEvent) -> void:
 		var solution := thistlethwaite_solver.solve(get_current_state())
 		print("Solution: ", " ".join(solution))
 		execute_algorithm(" ".join(solution))
+	elif key_event and key_event.keycode == KEY_B and key_event.is_pressed():
+		ThistlethwaiteTableGenerator.new().generate_all_tables()
 
 
 ## Returns a copy of the current cube state.

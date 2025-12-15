@@ -75,19 +75,19 @@ static func _get_e_slice_coord(state: RubiksCubeState) -> int:
 		for j in range(start, positions_with_e_edges[i]):
 			var n := 12 - j - 1
 			var r := 4 - i - 1
-
-			if r > n or r < 0:
-				continue
-			if r == 0 or r == n:
-				index += 1
-				continue
-
-			r = mini(r, n - r)
-
-			# calculate binomial coefficient
-			var binom := 1
-			for b in range(r):
-				binom = binom * (n - b) / (b + 1)
-			index += binom
+			index += _choose(n, r)
 
 	return index
+
+
+static func _choose(n: int, r: int) -> int:
+	if r < 0 or r > n:
+		return 0
+	return _factorial(n) / (_factorial(r) * _factorial(n - r))
+
+
+static func _factorial(n: int) -> int:
+	var prod := 1
+	for i in range(2, n + 1):
+		prod *= i
+	return prod

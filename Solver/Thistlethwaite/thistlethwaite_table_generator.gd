@@ -171,7 +171,7 @@ func generate_phase2_table() -> Dictionary[int, int]:
 				queue.push_back(next_state)
 
 				if table.size() % 1000 == 0:
-					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 9800.0 * 100])
+					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 29400.0 * 100])
 
 	print_rich("G2 → G3 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
 	print("Size: %d states" % table.size())

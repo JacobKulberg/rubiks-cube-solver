@@ -27,16 +27,14 @@ static func get_phase1_coord(state: RubiksCubeState) -> int:
 	return corner_coord * 495 + m_slice_coord
 
 
-## Returns the G2 coordinate composed of the E/S-slice position, corner tetrad, and edge parity coordinates.
+## Returns the G2 coordinate composed of the E/S-slice position, corner tetrad, edge parity, and tetrad twist coordinates.
 static func get_phase2_coord(state: RubiksCubeState) -> int:
 	var es_slice_coord := _get_es_slice_coord(state)
 	var corner_tetrad_coord := _get_corner_tetrad_coord(state)
-	var edge_parity_coord := _get_edge_parity_coord(state)
-	# TODO: tetrad twist coord
-	return (es_slice_coord * 70 + corner_tetrad_coord) * 2 + edge_parity_coord
+	var tetrad_twist_coord := _get_tetrad_twist_coord(state) # edge parity built in
+	return (es_slice_coord * 70 + corner_tetrad_coord) * 6 + tetrad_twist_coord
 
 
-#return corner_tetrad_twist_coord
 ## Returns the edge orientation coordinate for phase G0 (0-2047).[br][br]
 ##
 ## Encodes the orientation of the first 11 edges as a binary number.[br]
@@ -176,20 +174,72 @@ static func _get_corner_tetrad_coord(state: RubiksCubeState) -> int:
 	return index
 
 
-## Returns the edge parity coordinate for phase G2 (0-1).[br][br]
+## Returns the tetrad twists coordinate for phase G2 (0-69).[br][br]
 ##
-## Encodes the parity of the edge permutation as 0 (even) or 1 (odd).[br][br]
+## Encodes the combined twist and parity of the corner tetrads.[br][br]
 ##
 ## Used to reduce G2 to G3.
-static func _get_edge_parity_coord(state: RubiksCubeState) -> int:
-	# credit to: https://www.stefan-pochmann.info/spocc/other_stuff/tools/solver_thistlethwaite/solver_thistlethwaite_cpp.txt
-	var parity := 0
+static func _get_tetrad_twist_coord(state: RubiksCubeState) -> int:
+	# credit to Jaap Scherphuis: https://puzzling.stackexchange.com/a/109429
 
-	for i in range(8):
-		for j in range(i + 1, 8):
-			parity ^= 1 if state.edge_permutations[i] > state.edge_permutations[j] else 0
+	# define a consistent tetrad split and a stable mapping to indices 0..7,
+	# where indices 0..3 are tetrad A and 4..7 are tetrad B
+	var tetrad_a := [
+		state.CORNER.UFR,
+		state.CORNER.UBL,
+		state.CORNER.DBR,
+		state.CORNER.DFL,
+	]
+	var tetrad_b := [
+		state.CORNER.UBR,
+		state.CORNER.UFL,
+		state.CORNER.DFR,
+		state.CORNER.DBL,
+	]
 
-	return parity
+	var corner_to_tetrad_index := { }
+	for i in range(4):
+		corner_to_tetrad_index[tetrad_a[i]] = i # 0..3
+		corner_to_tetrad_index[tetrad_b[i]] = 4 + i # 4..7
+
+	# map corners to their tetrad-relative positions
+	var combined_perm := PackedInt32Array()
+	combined_perm.resize(8)
+
+	var tetrad_b_perm := PackedInt32Array()
+	tetrad_b_perm.resize(4)
+
+	var next_a := 0
+	var next_b := 0
+
+	# iterate corner positions 0..7, using the same order as state.corner_permutations
+	for pos in range(8):
+		var corner := state.corner_permutations[pos]
+		var tetrad_index: int = corner_to_tetrad_index[corner] # 0..7
+
+		if (tetrad_index & 4) != 0:
+			# corner belongs to tetrad B
+			combined_perm[tetrad_index] = next_b
+			next_b += 1
+		else:
+			# corner belongs to tetrad A
+			combined_perm[next_a] = tetrad_index
+			next_a += 1
+
+	# find permutation of tetrad B after "solving" tetrad A
+	for i in range(4):
+		tetrad_b_perm[i] = combined_perm[4 + combined_perm[i]]
+
+	# fix one piece of tetrad B (so only relative arrangement matters)
+	for i in range(3, 0, -1):
+		tetrad_b_perm[i] ^= tetrad_b_perm[0]
+
+	# encode (twist * 2 + parity) into 0..5
+	var twist_plus_parity := tetrad_b_perm[1] * 2 - 2
+	if tetrad_b_perm[3] < tetrad_b_perm[2]:
+		twist_plus_parity += 1
+
+	return twist_plus_parity
 
 
 static func _choose(n: int, r: int) -> int:

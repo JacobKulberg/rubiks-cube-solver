@@ -131,7 +131,7 @@ static func _get_es_slice_coord(state: RubiksCubeState) -> int:
 	positions_with_e_edges.sort()
 	var index := 0
 
-	# choose 4 M-slice edges out of 8 positions; C(8,4) = 70
+	# choose 4 E-slice edges out of 8 positions; C(8,4) = 70
 	for i in range(4):
 		var start := 0 if i == 0 else positions_with_e_edges[i - 1] + 1
 		for j in range(start, positions_with_e_edges[i]):
@@ -182,26 +182,12 @@ static func _get_corner_tetrad_coord(state: RubiksCubeState) -> int:
 ##
 ## Used to reduce G2 to G3.
 static func _get_edge_parity_coord(state: RubiksCubeState) -> int:
-	var visited := []
-	visited.resize(12)
-	visited.fill(false)
-
+	# credit to: https://www.stefan-pochmann.info/spocc/other_stuff/tools/solver_thistlethwaite/solver_thistlethwaite_cpp.txt
 	var parity := 0
 
-	for i in range(12):
-		if visited[i]:
-			continue
-
-		var cycle_len := 0
-		var j := i
-
-		while not visited[j]:
-			visited[j] = true
-			j = state.edge_permutations[j]
-			cycle_len += 1
-
-		if cycle_len > 0:
-			parity ^= (cycle_len - 1) & 1
+	for i in range(8):
+		for j in range(i + 1, 8):
+			parity ^= 1 if state.edge_permutations[i] > state.edge_permutations[j] else 0
 
 	return parity
 

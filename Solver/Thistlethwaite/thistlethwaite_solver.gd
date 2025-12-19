@@ -52,4 +52,35 @@ func solve(state: RubiksCubeState) -> Array[String]:
 	all_turns.append_array(phase1_turns)
 	all_turns.append_array(phase2_turns)
 	all_turns.append_array(phase3_turns)
+	_reduce_redundant_turns(all_turns)
 	return all_turns
+
+
+func _reduce_redundant_turns(turns: Array[String]) -> void:
+	var i := 0
+	while i < turns.size() - 1:
+		if turns[i][0] != turns[i + 1][0]:
+			i += 1
+			continue
+
+		var total := _turn_value(turns[i]) + _turn_value(turns[i + 1])
+		total = (total % 4 + 4) % 4
+
+		turns.remove_at(i + 1)
+
+		if total == 0:
+			turns.remove_at(i)
+		else:
+			turns[i] = turns[i][0] + ("" if total == 1 else "2" if total == 2 else "'")
+
+		i = maxi(i - 1, 0)
+
+
+func _turn_value(turn: String) -> int:
+	if turn.length() == 1:
+		return 1
+
+	if turn[1] == "'":
+		return -1
+
+	return 2

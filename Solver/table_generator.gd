@@ -24,7 +24,7 @@ func save_table(table: Dictionary[int, int], filepath: String) -> void:
 	file.store_32(table.size())
 
 	for key: int in table.keys():
-		file.store_32(key) # coordinate
+		file.store_64(key) # coordinate
 		file.store_32(table[key]) # depth
 
 	file.close()
@@ -47,7 +47,7 @@ func load_table(filepath: String) -> Dictionary[int, int]:
 	var size := file.get_32()
 
 	for i in range(size):
-		var key := file.get_32() # coordinate
+		var key := file.get_64() # coordinate
 		var value := file.get_32() # depth
 		table[key] = value
 

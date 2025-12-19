@@ -12,6 +12,8 @@ const G0_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U", "U'", "U
 const G1_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "F", "F'", "F2", "B", "B'", "B2"]
 ## The 10 turns allowed in phase G2
 const G2_TURNS: Array[String] = ["R", "R'", "R2", "L", "L'", "L2", "U2", "D2", "F2", "B2"]
+## The 6 turns allowed in phase G3
+const G3_TURNS: Array[String] = ["R2", "L2", "U2", "D2", "F2", "B2"]
 
 
 ## Returns the G0 coordinate composed of the edge orientation coordinate.
@@ -33,6 +35,12 @@ static func get_phase2_coord(state: RubiksCubeState) -> int:
 	var corner_tetrad_coord := _get_corner_tetrad_coord(state)
 	var tetrad_twist_coord := _get_tetrad_twist_coord(state) # edge parity built in
 	return (es_slice_coord * 70 + corner_tetrad_coord) * 6 + tetrad_twist_coord
+
+
+static func get_phase3_coord(state: RubiksCubeState) -> int:
+	var corner_perm_coord := _get_corner_perm_coord(state)
+	var edge_perm_coord := _get_edge_perm_coord(state)
+	return edge_perm_coord * 96 + corner_perm_coord
 
 
 ## Returns the edge orientation coordinate for phase G0 (0-2047).[br][br]
@@ -174,7 +182,7 @@ static func _get_corner_tetrad_coord(state: RubiksCubeState) -> int:
 	return index
 
 
-## Returns the tetrad twists coordinate for phase G2 (0-69).[br][br]
+## Returns the tetrad twists coordinate for phase G2 (0-5).[br][br]
 ##
 ## Encodes the combined twist and parity of the corner tetrads.[br][br]
 ##
@@ -240,6 +248,64 @@ static func _get_tetrad_twist_coord(state: RubiksCubeState) -> int:
 		twist_plus_parity += 1
 
 	return twist_plus_parity
+
+
+## Returns the corner permutation coordinate for phase G3 (0-95).[br][br]
+##
+## Encodes the permutation of the 8 corners using the factorial number system.[br][br]
+##
+## Used to reduce G3 to G4.
+static func _get_corner_perm_coord(state: RubiksCubeState) -> int:
+	var perm := state.corner_permutations
+	var index := 0
+	var used := []
+
+	# copy so we can mark used corners
+	for i in range(8):
+		used.push_back(false)
+
+	# factorial number system (Lehmer code)
+	# total states = 8! = 40320
+	# unique corner permutations in G3 = 96
+	for i in range(8):
+		var smaller_unused := 0
+		for j in range(perm[i]):
+			if not used[j]:
+				smaller_unused += 1
+
+		index += smaller_unused * _factorial(7 - i)
+		used[perm[i]] = true
+
+	return index
+
+
+## Returns the edge permutation coordinate for phase G3 (0-6911).[br][br]
+##
+## Encodes the permutation of the 12 edges using the factorial number system.[br][br
+##
+## Used to reduce G3 to G4.
+static func _get_edge_perm_coord(state: RubiksCubeState) -> int:
+	var perm := state.edge_permutations
+	var index := 0
+	var used := []
+
+	# track which edges have already been used
+	for i in range(12):
+		used.push_back(false)
+
+	# factorial number system (Lehmer code)
+	# total states = 12! = 479001600
+	# unique edge permutations in G3 = 6912
+	for i in range(12):
+		var smaller_unused := 0
+		for j in range(perm[i]):
+			if not used[j]:
+				smaller_unused += 1
+
+		index += smaller_unused * _factorial(11 - i)
+		used[perm[i]] = true
+
+	return index
 
 
 static func _choose(n: int, r: int) -> int:

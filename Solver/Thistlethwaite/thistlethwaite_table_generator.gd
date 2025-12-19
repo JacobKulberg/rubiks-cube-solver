@@ -14,19 +14,25 @@ extends TableGenerator
 func generate_all_tables() -> void:
 	print_rich("[color=white][b]=== Starting Thistlethwaite Table Generation ===[/b][/color]\n")
 
-	## Generate and save G0 table
-	#var phase0_table := generate_phase0_table()
-	#print("Max depth: %d turns\n" % _get_max_depth(phase0_table))
-	#save_table(phase0_table, "res://Solver/Thistlethwaite/Tables/phase0_table.dat")
-	#
-	## Generate and save G1 table
-	#var phase1_table := generate_phase1_table()
-	#print("Max depth: %d turns\n" % _get_max_depth(phase1_table))
-	#save_table(phase1_table, "res://Solver/Thistlethwaite/Tables/phase1_table.dat")
+	# Generate and save G0 table
+	var phase0_table := generate_phase0_table()
+	print("Max depth: %d turns\n" % _get_max_depth(phase0_table))
+	save_table(phase0_table, "res://Solver/Thistlethwaite/Tables/phase0_table.dat")
 
+	# Generate and save G1 table
+	var phase1_table := generate_phase1_table()
+	print("Max depth: %d turns\n" % _get_max_depth(phase1_table))
+	save_table(phase1_table, "res://Solver/Thistlethwaite/Tables/phase1_table.dat")
+
+	# Generate and save G2 table
 	var phase2_table := generate_phase2_table()
 	print("Max depth: %d turns\n" % _get_max_depth(phase2_table))
 	save_table(phase2_table, "res://Solver/Thistlethwaite/Tables/phase2_table.dat")
+
+	# Generate and save G3 table
+	var phase3_table := generate_phase3_table()
+	print("Max depth: %d turns\n" % _get_max_depth(phase3_table))
+	save_table(phase3_table, "res://Solver/Thistlethwaite/Tables/phase3_table.dat")
 
 
 ## Generates the G0 lookup table.[br][br]
@@ -131,10 +137,10 @@ func generate_phase1_table() -> Dictionary[int, int]:
 
 ## Generates the G2 lookup table.[br][br]
 ##
-## Explores all reachable states when E/S-slice position, corner tetrad, and edge parity matter.[br]
-## Uses 10 turns. Expected size: 9800 states, max depth: 12
+## Explores all reachable states when E/S-slice position, corner tetrad, edge parity, and tetrad twist matter.[br]
+## Uses 13 turns. Expected size: 29400 states, max depth: 13
 ##
-## Returns a [Dictionary] mapping E/S-slice position, corner tetrad, and edge parity coordinates to search depth.
+## Returns a [Dictionary] mapping E/S-slice position, corner tetrad, edge parity, and tetrad twist coordinates to search depth.
 func generate_phase2_table() -> Dictionary[int, int]:
 	var table: Dictionary[int, int] = { }
 	var queue: Array[RubiksCubeState] = []
@@ -174,6 +180,56 @@ func generate_phase2_table() -> Dictionary[int, int]:
 					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 29400.0 * 100])
 
 	print_rich("G2 → G3 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
+	print("Size: %d states" % table.size())
+
+	return table
+
+
+## Generates the G3 lookup table.[br][br]
+##
+## Explores all reachable states when edge and corner permutations matter.[br]
+## Uses 15 turns. Expected size: 663552 states, max depth: 15
+##
+## Returns a [Dictionary] mapping edge and corner permutation coordinates to search depth.
+func generate_phase3_table() -> Dictionary[int, int]:
+	var table: Dictionary[int, int] = { }
+	var queue: Array[RubiksCubeState] = []
+
+	# start from solved state
+	var solved_state := RubiksCubeState.new()
+	var solved_coord := ThistlethwaiteCoordinates.get_phase3_coord(solved_state)
+
+	table[solved_coord] = 0
+	queue.push_back(solved_state)
+
+	# only allow turns that preserve edge orientation
+	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G3_TURNS
+
+	print_rich("[b]Generating[/b] G3 → G4 table...")
+	var start_time := Time.get_ticks_msec()
+
+	# BFS explore all reachable states level by level
+	while not queue.is_empty():
+		var current_state: RubiksCubeState = queue[0]
+		queue.remove_at(0)
+		var current_coord := ThistlethwaiteCoordinates.get_phase3_coord(current_state)
+		var current_depth: int = table[current_coord]
+
+		# try all turns from current state
+		for turn in valid_turns:
+			var next_state := current_state.copy()
+			next_state.apply_turn(turn)
+			var next_coord := ThistlethwaiteCoordinates.get_phase3_coord(next_state)
+
+			# record new state if not seen before
+			if not table.has(next_coord):
+				table[next_coord] = current_depth + 1
+				queue.push_back(next_state)
+
+				if table.size() % 1000 == 0:
+					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 663552.0 * 100])
+
+	print_rich("G3 → G4 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
 	print("Size: %d states" % table.size())
 
 	return table

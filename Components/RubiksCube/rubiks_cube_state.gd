@@ -293,7 +293,7 @@ func print(display_acronyms: bool = false) -> void:
 			permutation_width = corner_dict[corner_permutations[i]].length()
 			orientation_width = corner_dict[corner_orientations[i]].length()
 
-		var max_width: Variant = max(permutation_width, orientation_width)
+		var max_width := maxi(permutation_width, orientation_width)
 		corner_widths.push_back(max_width)
 
 	var edge_widths: Array[int] = []
@@ -306,7 +306,7 @@ func print(display_acronyms: bool = false) -> void:
 			permutation_width = edge_dict[edge_permutations[i]].length()
 			orientation_width = edge_dict[edge_orientations[i]].length()
 
-		var max_width: Variant = max(header_width, permutation_width, orientation_width)
+		var max_width := maxi(maxi(header_width, permutation_width), orientation_width)
 		edge_widths.push_back(max_width)
 
 	var corner_header := " "

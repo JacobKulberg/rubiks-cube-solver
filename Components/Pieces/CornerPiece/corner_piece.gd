@@ -1,6 +1,10 @@
 @tool
 class_name CornerPiece
 extends Piece
+## Represents a corner piece of the Rubik's Cube.
+##
+## Corner pieces have three visible stickers and are located at the cube's corners.
+## Each sticker can be assigned a color via exported properties.
 
 @export var sticker1_color: Sticker.StickerColor:
 	get:

@@ -1,6 +1,10 @@
 @tool
 class_name CenterPiece
 extends Piece
+## Represents a center piece of the Rubik's Cube.
+##
+## Center pieces have one visible sticker and are located at the center of each face.
+## The sticker color can be assigned via an exported property.
 
 @export var sticker1_color: Sticker.StickerColor:
 	get:

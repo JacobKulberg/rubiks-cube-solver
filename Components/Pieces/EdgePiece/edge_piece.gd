@@ -1,6 +1,10 @@
 @tool
 class_name EdgePiece
 extends Piece
+## Represents an edge piece of the Rubik's Cube.
+##
+## Edge pieces have two visible stickers and are located between corners.
+## Each sticker can be assigned a color via exported properties.
 
 @export var sticker1_color: Sticker.StickerColor:
 	get:

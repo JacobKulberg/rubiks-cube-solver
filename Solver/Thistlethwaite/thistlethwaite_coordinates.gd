@@ -37,6 +37,7 @@ static func get_phase2_coord(state: RubiksCubeState) -> int:
 	return (es_slice_coord * 70 + corner_tetrad_coord) * 6 + tetrad_twist_coord
 
 
+## Returns the G3 coordinate composed of the corner and edge permutation coordinates.
 static func get_phase3_coord(state: RubiksCubeState) -> int:
 	var corner_perm_coord := _get_corner_perm_coord(state)
 	var edge_perm_coord := _get_edge_perm_coord(state)
@@ -84,18 +85,7 @@ static func _get_m_slice_coord(state: RubiksCubeState) -> int:
 			positions_with_m_edges.push_back(i)
 
 	positions_with_m_edges.sort()
-	var index := 0
-
-	# convert to combinatorial index using binomial coefficients
-	# encodes 4 edges from 12 = C(12, 4) = 495 combinations
-	for i in range(4):
-		var start := 0 if i == 0 else positions_with_m_edges[i - 1] + 1
-		for j in range(start, positions_with_m_edges[i]):
-			var n := 12 - j - 1
-			var r := 4 - i - 1
-			index += _choose(n, r)
-
-	return index
+	return _combinatorial_index(positions_with_m_edges, 12, 4)
 
 
 ## Returns the E/S-slice position coordinate for phase G2 (0-69).[br][br]
@@ -104,19 +94,8 @@ static func _get_m_slice_coord(state: RubiksCubeState) -> int:
 ##
 ## Used to reduce G2 to G3.
 static func _get_es_slice_coord(state: RubiksCubeState) -> int:
-	var e_edges := [
-		state.EDGE.FL,
-		state.EDGE.FR,
-		state.EDGE.BL,
-		state.EDGE.BR,
-	]
-
-	var m_edges := [
-		state.EDGE.UF,
-		state.EDGE.UB,
-		state.EDGE.DF,
-		state.EDGE.DB,
-	]
+	var e_edges := [state.EDGE.FL, state.EDGE.FR, state.EDGE.BL, state.EDGE.BR]
+	var m_edges := [state.EDGE.UF, state.EDGE.UB, state.EDGE.DF, state.EDGE.DB]
 
 	var positions_with_e_edges: Array[int] = []
 	var compressed_index := 0
@@ -135,17 +114,7 @@ static func _get_es_slice_coord(state: RubiksCubeState) -> int:
 		compressed_index += 1
 
 	positions_with_e_edges.sort()
-	var index := 0
-
-	# choose 4 E-slice edges out of 8 positions; C(8,4) = 70
-	for i in range(4):
-		var start := 0 if i == 0 else positions_with_e_edges[i - 1] + 1
-		for j in range(start, positions_with_e_edges[i]):
-			var n := 8 - j - 1
-			var r := 4 - i - 1
-			index += _choose(n, r)
-
-	return index
+	return _combinatorial_index(positions_with_e_edges, 8, 4)
 
 
 ## Returns the corner tetrad coordinate for phase G2 (0-69).[br][br]
@@ -169,17 +138,7 @@ static func _get_corner_tetrad_coord(state: RubiksCubeState) -> int:
 			positions_with_a.push_back(i)
 
 	positions_with_a.sort()
-	var index := 0
-
-	# encode 4 corners out of 8; C(8, 4) = 70
-	for i in range(4):
-		var start := 0 if i == 0 else positions_with_a[i - 1] + 1
-		for j in range(start, positions_with_a[i]):
-			var n := 8 - j - 1
-			var r := 4 - i - 1
-			index += _choose(n, r)
-
-	return index
+	return _combinatorial_index(positions_with_a, 8, 4)
 
 
 ## Returns the tetrad twists coordinate for phase G2 (0-5).[br][br]
@@ -260,11 +219,11 @@ static func _get_corner_perm_coord(state: RubiksCubeState) -> int:
 	var index := 0
 	var used := []
 
-	# copy so we can mark used corners
+	# track which corners have already been used
 	for i in range(8):
 		used.push_back(false)
 
-	# factorial number system (Lehmer code)
+	# factorial number system
 	# total states = 8! = 40320
 	# unique corner permutations in G3 = 96
 	for i in range(8):
@@ -281,7 +240,7 @@ static func _get_corner_perm_coord(state: RubiksCubeState) -> int:
 
 ## Returns the edge permutation coordinate for phase G3 (0-6911).[br][br]
 ##
-## Encodes the permutation of the 12 edges using the factorial number system.[br][br
+## Encodes the permutation of the 12 edges using the factorial number system.[br][br]
 ##
 ## Used to reduce G3 to G4.
 static func _get_edge_perm_coord(state: RubiksCubeState) -> int:
@@ -293,7 +252,7 @@ static func _get_edge_perm_coord(state: RubiksCubeState) -> int:
 	for i in range(12):
 		used.push_back(false)
 
-	# factorial number system (Lehmer code)
+	# factorial number system
 	# total states = 12! = 479001600
 	# unique edge permutations in G3 = 6912
 	for i in range(12):
@@ -305,6 +264,21 @@ static func _get_edge_perm_coord(state: RubiksCubeState) -> int:
 		index += smaller_unused * _factorial(11 - i)
 		used[perm[i]] = true
 
+	return index
+
+
+## Converts a sorted array of selected positions to a combinatorial index.[br][br]
+##
+## Uses binomial coefficients to encode which [param k] positions out of [param n] are selected.[br]
+## [param positions]: Sorted array of selected positions.[br]
+## [param n]: Total number of positions.[br]
+## [param k]: Number of positions to select.
+static func _combinatorial_index(positions: Array[int], n: int, k: int) -> int:
+	var index := 0
+	for i in range(k):
+		var start := 0 if i == 0 else positions[i - 1] + 1
+		for j in range(start, positions[i]):
+			index += _choose(n - j - 1, k - i - 1)
 	return index
 
 

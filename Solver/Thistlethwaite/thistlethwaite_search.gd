@@ -9,63 +9,45 @@ extends RefCounted
 
 ## Reduces G0 to G1 (orients all edges).[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G0 table (coordinates map to depth)[br][br]
 ##
 ## Returns a sequence of turns that orients all edges.[br]
 ## Uses all turns in the set {L, R, F, B, U, D}
-func solve_phase0(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
-	var solution_turns: Array[String] = []
-	var current_state := state.copy()
-
-	while true:
-		var current_coord := ThistlethwaiteCoordinates.get_phase0_coord(current_state)
-		var current_depth: int = table.get(current_coord, -1)
-
-		# goal state reached
-		if current_depth == 0:
-			break
-
-		# try all 18 turns, choose first that reduces depth
-		for turn: String in ThistlethwaiteCoordinates.G0_TURNS:
-			var test_state := current_state.copy()
-			test_state.apply_turn(turn)
-			var new_coord := ThistlethwaiteCoordinates.get_phase0_coord(test_state)
-			var new_depth: int = table.get(new_coord, -1)
-
-			# greedy: take first move that reduces depth (local optimum)
-			if new_depth == current_depth - 1:
-				solution_turns.push_back(turn)
-				current_state = test_state
-				break
-
-	return solution_turns
+func solve_phase0(state: RubiksCubeState, table: Dictionary) -> Array[String]:
+	return _greedy_search(state, table, ThistlethwaiteCoordinates.get_phase0_coord, ThistlethwaiteCoordinates.G0_TURNS)
 
 
 ## Reduces G1 to G2 (orients all corners and correctly places M-slice).[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G1 table (coordinates map to depth)[br][br]
 ##
 ## Returns a sequence of turns that orients all corners and correctly places M-slice edges in the M-slice.[br]
 ## Uses all turns in the set {L, R, F, B, U2, D2}
-func solve_phase1(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
+func solve_phase1(state: RubiksCubeState, table: Dictionary) -> Array[String]:
+	return _greedy_search(state, table, ThistlethwaiteCoordinates.get_phase1_coord, ThistlethwaiteCoordinates.G1_TURNS)
+
+
+## Generic greedy search for phases 0 and 1.[br][br]
+##
+## Repeatedly selects the first move that reduces the coordinate depth by 1.
+func _greedy_search(state: RubiksCubeState, table: Dictionary, coord_func: Callable, valid_turns: Array[String]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
 
 	while true:
-		var current_coord := ThistlethwaiteCoordinates.get_phase1_coord(current_state)
+		var current_coord: int = coord_func.call(current_state)
 		var current_depth: int = table.get(current_coord, -1)
 
 		# goal state reached
 		if current_depth == 0:
 			break
 
-		# try all 14 turns (to preserve edge orientation from G0), choose first that reduces depth
-		for turn: String in ThistlethwaiteCoordinates.G1_TURNS:
+		for turn: String in valid_turns:
 			var test_state := current_state.copy()
 			test_state.apply_turn(turn)
-			var new_coord := ThistlethwaiteCoordinates.get_phase1_coord(test_state)
+			var new_coord: int = coord_func.call(test_state)
 			var new_depth: int = table.get(new_coord, -1)
 
 			# greedy: take first move that reduces depth (local optimum)
@@ -81,12 +63,12 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[
 ## Correctly places E- and S-slice edges, places corners in their correct tetrads,
 ## fixes edge parity, and resolves each tetrad's twist.[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G2 table (coordinates map to depth)[br][br]
 ##
 ## Returns a sequence of turns that completes Phase 2.[br]
 ## Uses all turns in the set {L, R, F2, B2, U2, D2}
-func solve_phase2(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
+func solve_phase2(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 	for depth in range(0, 14): # max depth: 13 = 14 - 1
 		var solution_turns: Array[String] = []
 
@@ -99,12 +81,12 @@ func solve_phase2(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[
 ## Reduces G3 to G4.
 ## Correctly permutes edges and corners.[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G3 table (coordinates map to depth)[br][br]
 ##
 ## Returns a sequence of turns that completes Phase 3.[br]
 ## Uses all turns in the set {L2, R2, F2, B2, U2, D2}
-func solve_phase3(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[String]:
+func solve_phase3(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 	for depth in range(0, 16): # max depth: 15 = 16 - 1
 		var solution_turns: Array[String] = []
 
@@ -117,16 +99,16 @@ func solve_phase3(state: RubiksCubeState, table: Dictionary[int, int]) -> Array[
 ## Performs an iterative deepening depth-first search to find a solution for phase G2.[br][br]
 ##
 ## Searches for a sequence of G2-legal moves that reduces the cube from G2 to G3 by correctly
-## placing E- and S-sliceedges, placing corners in their correct tetrads, fixing edge parity,
+## placing E- and S-slice edges, placing corners in their correct tetrads, fixing edge parity,
 ## and resolving each tetrad's twist.[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G2 table (coordinates map to depth)[br]
 ## [param depth]: Current search depth limit.[br]
 ## [param solution_turns]: Array to store found solution turns.[br][br]
 ##
 ## Returns true if a solution was found within the given depth, false otherwise.
-func _search_phase2_iddfs(state: RubiksCubeState, table: Dictionary[int, int], depth: int, solution_turns: Array[String]) -> bool:
+func _search_phase2_iddfs(state: RubiksCubeState, table: Dictionary, depth: int, solution_turns: Array[String]) -> bool:
 	var coord := ThistlethwaiteCoordinates.get_phase2_coord(state)
 	var current_depth: int = table.get(coord, -1)
 
@@ -158,17 +140,14 @@ func _search_phase2_iddfs(state: RubiksCubeState, table: Dictionary[int, int], d
 ## Searches for a sequence of G3-legal moves that reduces the cube from G3 to G4 by correctly
 ## permuting edges and corners.[br][br]
 ##
-## [param state]: Current cube state (this state will be modified)[br]
+## [param state]: Current cube state[br]
 ## [param table]: Precomputed G3 table (coordinates map to depth)[br]
 ## [param depth]: Current search depth limit.[br]
 ## [param solution_turns]: Array to store found solution turns.[br][br]
 ##
 ## Returns true if a solution was found within the given depth, false otherwise.
-func _search_phase3_iddfs(state: RubiksCubeState, table: Dictionary[int, int], depth: int, solution_turns: Array[String]) -> bool:
+func _search_phase3_iddfs(state: RubiksCubeState, table: Dictionary, depth: int, solution_turns: Array[String]) -> bool:
 	var coord := ThistlethwaiteCoordinates.get_phase3_coord(state)
-	if not table.has(coord):
-		push_error("PHASE3 coord not in table: %d" % coord)
-		return false
 	var current_depth: int = table.get(coord, -1)
 
 	# goal state reached

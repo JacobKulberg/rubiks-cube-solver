@@ -41,8 +41,8 @@ func generate_all_tables() -> void:
 ## Uses all 18 turns. Expected size: 2048 states, max depth: 7.[br][br]
 ##
 ## Returns a [Dictionary] mapping edge orientation coordinates to search depth.
-func generate_phase0_table() -> Dictionary[int, int]:
-	var table: Dictionary[int, int] = { }
+func generate_phase0_table() -> Dictionary:
+	var table: Dictionary = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -91,8 +91,8 @@ func generate_phase0_table() -> Dictionary[int, int]:
 ## Uses 14 turns. Expected size: 1082565 states, max depth: 10.[br][br]
 ##
 ## Returns a [Dictionary] mapping corner orientation and M-slice position coordinates to search depth.
-func generate_phase1_table() -> Dictionary[int, int]:
-	var table: Dictionary[int, int] = { }
+func generate_phase1_table() -> Dictionary:
+	var table: Dictionary = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -138,11 +138,11 @@ func generate_phase1_table() -> Dictionary[int, int]:
 ## Generates the G2 lookup table.[br][br]
 ##
 ## Explores all reachable states when E/S-slice position, corner tetrad, edge parity, and tetrad twist matter.[br]
-## Uses 13 turns. Expected size: 29400 states, max depth: 13
+## Uses 10 turns. Expected size: 29400 states, max depth: 13
 ##
 ## Returns a [Dictionary] mapping E/S-slice position, corner tetrad, edge parity, and tetrad twist coordinates to search depth.
-func generate_phase2_table() -> Dictionary[int, int]:
-	var table: Dictionary[int, int] = { }
+func generate_phase2_table() -> Dictionary:
+	var table: Dictionary = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -188,11 +188,11 @@ func generate_phase2_table() -> Dictionary[int, int]:
 ## Generates the G3 lookup table.[br][br]
 ##
 ## Explores all reachable states when edge and corner permutations matter.[br]
-## Uses 15 turns. Expected size: 663552 states, max depth: 15
+## Uses 6 turns. Expected size: 663552 states, max depth: 15
 ##
 ## Returns a [Dictionary] mapping edge and corner permutation coordinates to search depth.
-func generate_phase3_table() -> Dictionary[int, int]:
-	var table: Dictionary[int, int] = { }
+func generate_phase3_table() -> Dictionary:
+	var table: Dictionary = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
@@ -236,7 +236,7 @@ func generate_phase3_table() -> Dictionary[int, int]:
 
 
 ## Returns the maximum depth-value in a given lookup table.
-func _get_max_depth(table: Dictionary[int, int]) -> int:
+func _get_max_depth(table: Dictionary) -> int:
 	var max_depth := 0
 	for depth in table.values() as Array[int]:
 		if depth > max_depth:

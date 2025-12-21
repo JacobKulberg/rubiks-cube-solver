@@ -23,7 +23,9 @@ environment = SubResource("Environment_r0du0")
 
 [node name="RubiksCube" parent="." instance=ExtResource("1_r150o")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
-base_turn_duration = 0.2
+base_turn_duration = 0.01
+min_turn_duration = 0.01
+max_turns_queued = 50
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.5778576, -0.7071068, -0.40860704, 0.5770964, 5, 5, 5)

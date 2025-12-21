@@ -110,11 +110,12 @@ func _reverse_notation(turn_notation: String) -> String:
 
 	if turn_notation.length() == 1:
 		return face + "'"
-	elif turn_notation[1] == "'":
-		return face
 
-	# is a half turn
-	return turn_notation
+	var suffix := turn_notation[1]
+	if suffix == "'":
+		return face
+	else: # "2" - half turn
+		return turn_notation
 
 
 ## Executes the turn animation and updates cube state when the turn completes.
@@ -256,7 +257,7 @@ func _reassign_piece_groups(pieces: Array[Node3D]) -> void:
 
 ## Executes the next queued turn, if one exists.
 func _process_next_turn() -> void:
-	if turn_queue.size() > 0:
+	if not turn_queue.is_empty():
 		var next_turn := turn_queue[0]
 		turn_queue.remove_at(0)
 		_make_turn(next_turn.turn_notation)

@@ -5,13 +5,13 @@ extends Node3D
 ## Handles user events and turn interaction.
 
 ## Base duration for a single turn when the queue is empty.
-@export var base_turn_duration := 0.15
+@export var base_turn_duration := 0.2
 ## Minimum allowed duration a turn may reach.
-@export var min_turn_duration := 0.075
+@export var min_turn_duration := 0.08
 ## Amount by which turn duration increases or decreases as queue size changes.
-@export var turn_duration_step := 0.01
+@export var turn_duration_step := 0.015
 ## Maximum number of turns allowed in the queue.
-@export var max_turns_queued := 10
+@export var max_turns_queued := 8
 ## Sensitivity for mouse rotation.
 @export var rotation_sensitivity := 0.005
 

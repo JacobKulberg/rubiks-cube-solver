@@ -144,7 +144,7 @@ func _make_turn(turn_notation: String) -> void:
 
 	# PI/2 < 2.0 < PI
 	if absf(turn_rotation.dot(Vector3.ONE)) > 2.0:
-		turn_duration *= 2
+		turn_duration *= 1.5
 
 	await _animate_turn(turn_helper, turn_rotation, turn_duration)
 

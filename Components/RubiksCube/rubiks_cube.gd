@@ -76,15 +76,19 @@ func _input(event: InputEvent) -> void:
 		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
 
 	var key_event := event as InputEventKey
-	if key_event and key_event.keycode == KEY_SPACE and key_event.is_pressed():
-		var solution := thistlethwaite_solver.solve(get_current_state())
-		print("Solution: ", " ".join(solution))
-		execute_algorithm(" ".join(solution))
-	elif key_event and key_event.keycode == KEY_B and key_event.is_pressed():
-		ThistlethwaiteTableGenerator.new().generate_all_tables()
-		thistlethwaite_solver = ThistlethwaiteSolver.new()
-	elif key_event and key_event.keycode == KEY_P and key_event.is_pressed():
-		state.print()
+	if key_event and key_event.is_pressed():
+		match key_event.keycode:
+			KEY_SPACE:
+				var solution := thistlethwaite_solver.solve(get_current_state())
+				print("Solution: ", " ".join(solution))
+				execute_algorithm(" ".join(solution))
+			KEY_B:
+				ThistlethwaiteTableGenerator.new().generate_all_tables()
+				thistlethwaite_solver = ThistlethwaiteSolver.new()
+			KEY_P:
+				state.print()
+			KEY_T:
+				ThistlethwaiteTestRunner.run()
 
 
 ## Returns a copy of the current cube state.

@@ -13,11 +13,11 @@ var phase3_table: Dictionary
 
 
 ## Loads lookup tables from disk.
-func _init() -> void:
-	phase0_table = load_table("res://Solver/Thistlethwaite/Tables/phase0_table.dat")
-	phase1_table = load_table("res://Solver/Thistlethwaite/Tables/phase1_table.dat")
-	phase2_table = load_table("res://Solver/Thistlethwaite/Tables/phase2_table.dat")
-	phase3_table = load_table("res://Solver/Thistlethwaite/Tables/phase3_table.dat")
+func _init(verbose: bool = true) -> void:
+	phase0_table = load_table("res://Solver/Thistlethwaite/Tables/phase0_table.dat", verbose)
+	phase1_table = load_table("res://Solver/Thistlethwaite/Tables/phase1_table.dat", verbose)
+	phase2_table = load_table("res://Solver/Thistlethwaite/Tables/phase2_table.dat", verbose)
+	phase3_table = load_table("res://Solver/Thistlethwaite/Tables/phase3_table.dat", verbose)
 
 
 ## Solves the cube using Thistlethwaite's Algorithm.[br][br]
@@ -27,6 +27,7 @@ func _init() -> void:
 ## Returns the complete solution as an array of turn strings in standard notation.[br]
 ## The solution chains together turns from all phases.
 func solve(state: RubiksCubeState) -> Array[String]:
+	state = state.copy()
 	var search := ThistlethwaiteSearch.new()
 
 	# Phase G0: Orient all edges

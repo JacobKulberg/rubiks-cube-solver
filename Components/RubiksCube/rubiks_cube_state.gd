@@ -284,6 +284,8 @@ func to_hash() -> int:
 ## When [param display_acronyms] is [code]true[/code], cubelet IDs are printed as labels
 ## (e.g. UBL, BR) instead of numeric indices.
 func print(display_acronyms: bool = false) -> void:
+	print()
+
 	var corner_widths: Array[int] = []
 	for i in range(8):
 		var permutation_width := str(corner_permutations[i]).length()

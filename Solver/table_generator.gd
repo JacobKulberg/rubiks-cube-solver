@@ -31,7 +31,7 @@ func save_table(table: Dictionary, filepath: String) -> void:
 ## Loads a lookup table from a binary file.[br][br]
 ##
 ## [param filepath]: Path where the table is saved (e.g. "res://Solver/Tables/phase0.dat").
-func load_table(filepath: String) -> Dictionary:
+func load_table(filepath: String, verbose: bool) -> Dictionary:
 	var file := FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		push_error("Failed to open file for reading: " + filepath)
@@ -49,5 +49,6 @@ func load_table(filepath: String) -> Dictionary:
 
 	file.close()
 
-	print("Loaded table from: %s (size: %d)" % [filepath, table.size()])
+	if verbose:
+		print("Loaded table from: %s (size: %d)" % [filepath, table.size()])
 	return table

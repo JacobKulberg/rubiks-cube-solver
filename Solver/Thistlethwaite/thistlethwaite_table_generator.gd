@@ -12,27 +12,25 @@ extends TableGenerator
 ## This is the main entry point for table generation.[br]
 ## Run this once to create the tables before using the solver.
 func generate_all_tables() -> void:
-	print_rich("[color=white][b]=== Starting Thistlethwaite Table Generation ===[/b][/color]\n")
+	print_rich("[color=white][b]\n=== Starting Thistlethwaite Table Generation ===[/b][/color]\n")
 
 	# Generate and save G0 table
 	var phase0_table := generate_phase0_table()
-	print("Max depth: %d turns\n" % _get_max_depth(phase0_table))
 	save_table(phase0_table, "res://Solver/Thistlethwaite/Tables/phase0_table.dat")
 
 	# Generate and save G1 table
 	var phase1_table := generate_phase1_table()
-	print("Max depth: %d turns\n" % _get_max_depth(phase1_table))
 	save_table(phase1_table, "res://Solver/Thistlethwaite/Tables/phase1_table.dat")
 
 	# Generate and save G2 table
 	var phase2_table := generate_phase2_table()
-	print("Max depth: %d turns\n" % _get_max_depth(phase2_table))
 	save_table(phase2_table, "res://Solver/Thistlethwaite/Tables/phase2_table.dat")
 
 	# Generate and save G3 table
 	var phase3_table := generate_phase3_table()
-	print("Max depth: %d turns\n" % _get_max_depth(phase3_table))
 	save_table(phase3_table, "res://Solver/Thistlethwaite/Tables/phase3_table.dat")
+
+	print_rich("[color=white][b]=== Thistlethwaite Tables Generated ===[/b][/color]\n")
 
 
 ## Generates the G0 lookup table.[br][br]
@@ -42,47 +40,12 @@ func generate_all_tables() -> void:
 ##
 ## Returns a [Dictionary] mapping edge orientation coordinates to search depth.
 func generate_phase0_table() -> Dictionary:
-	var table: Dictionary = { }
-	var queue: Array[RubiksCubeState] = []
-
-	# start from solved state
-	var solved_state := RubiksCubeState.new()
-	var solved_coord := ThistlethwaiteCoordinates.get_phase0_coord(solved_state)
-
-	table[solved_coord] = 0
-	queue.push_back(solved_state)
-
-	# allow all 18 turns
-	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G0_TURNS
-
-	print_rich("[b]Generating[/b] G0 → G1 table...")
-	var start_time := Time.get_ticks_msec()
-
-	# BFS: explore all reachable states level by level
-	while not queue.is_empty():
-		var current_state: RubiksCubeState = queue[0]
-		queue.remove_at(0)
-		var current_coord := ThistlethwaiteCoordinates.get_phase0_coord(current_state)
-		var current_depth: int = table[current_coord]
-
-		# try all turns from the current state
-		for turn in valid_turns:
-			var next_state := current_state.copy()
-			next_state.apply_turn(turn)
-			var next_coord := ThistlethwaiteCoordinates.get_phase0_coord(next_state)
-
-			# record new state if not seen before
-			if not table.has(next_coord):
-				table[next_coord] = current_depth + 1
-				queue.push_back(next_state)
-
-				if table.size() % 100 == 0:
-					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 2048.0 * 100])
-
-	print_rich("G0 → G1 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
-	print("Size: %d states" % table.size())
-
-	return table
+	return _generate_phase_table(
+		ThistlethwaiteCoordinates.get_phase0_coord,
+		ThistlethwaiteCoordinates.G0_TURNS,
+		2048,
+		"G0 → G1",
+	)
 
 
 ## Generates the G1 lookup table.[br][br]
@@ -92,47 +55,12 @@ func generate_phase0_table() -> Dictionary:
 ##
 ## Returns a [Dictionary] mapping corner orientation and M-slice position coordinates to search depth.
 func generate_phase1_table() -> Dictionary:
-	var table: Dictionary = { }
-	var queue: Array[RubiksCubeState] = []
-
-	# start from solved state
-	var solved_state := RubiksCubeState.new()
-	var solved_coord := ThistlethwaiteCoordinates.get_phase1_coord(solved_state)
-
-	table[solved_coord] = 0
-	queue.push_back(solved_state)
-
-	# only allow turns that preserve edge orientation
-	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G1_TURNS
-
-	print_rich("[b]Generating[/b] G1 → G2 table...")
-	var start_time := Time.get_ticks_msec()
-
-	# BFS explore all reachable states level by level
-	while not queue.is_empty():
-		var current_state: RubiksCubeState = queue[0]
-		queue.remove_at(0)
-		var current_coord := ThistlethwaiteCoordinates.get_phase1_coord(current_state)
-		var current_depth: int = table[current_coord]
-
-		# try all turns from current state
-		for turn in valid_turns:
-			var next_state := current_state.copy()
-			next_state.apply_turn(turn)
-			var next_coord := ThistlethwaiteCoordinates.get_phase1_coord(next_state)
-
-			# record new state if not seen before
-			if not table.has(next_coord):
-				table[next_coord] = current_depth + 1
-				queue.push_back(next_state)
-
-				if table.size() % 10000 == 0:
-					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 1082565.0 * 100])
-
-	print_rich("G1 → G2 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
-	print("Size: %d states" % table.size())
-
-	return table
+	return _generate_phase_table(
+		ThistlethwaiteCoordinates.get_phase1_coord,
+		ThistlethwaiteCoordinates.G1_TURNS,
+		1082565,
+		"G1 → G2",
+	)
 
 
 ## Generates the G2 lookup table.[br][br]
@@ -142,47 +70,12 @@ func generate_phase1_table() -> Dictionary:
 ##
 ## Returns a [Dictionary] mapping E/S-slice position, corner tetrad, edge parity, and tetrad twist coordinates to search depth.
 func generate_phase2_table() -> Dictionary:
-	var table: Dictionary = { }
-	var queue: Array[RubiksCubeState] = []
-
-	# start from solved state
-	var solved_state := RubiksCubeState.new()
-	var solved_coord := ThistlethwaiteCoordinates.get_phase2_coord(solved_state)
-
-	table[solved_coord] = 0
-	queue.push_back(solved_state)
-
-	# only allow turns that preserve edge orientation
-	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G2_TURNS
-
-	print_rich("[b]Generating[/b] G2 → G3 table...")
-	var start_time := Time.get_ticks_msec()
-
-	# BFS explore all reachable states level by level
-	while not queue.is_empty():
-		var current_state: RubiksCubeState = queue[0]
-		queue.remove_at(0)
-		var current_coord := ThistlethwaiteCoordinates.get_phase2_coord(current_state)
-		var current_depth: int = table[current_coord]
-
-		# try all turns from current state
-		for turn in valid_turns:
-			var next_state := current_state.copy()
-			next_state.apply_turn(turn)
-			var next_coord := ThistlethwaiteCoordinates.get_phase2_coord(next_state)
-
-			# record new state if not seen before
-			if not table.has(next_coord):
-				table[next_coord] = current_depth + 1
-				queue.push_back(next_state)
-
-				if table.size() % 1000 == 0:
-					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 29400.0 * 100])
-
-	print_rich("G2 → G3 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
-	print("Size: %d states" % table.size())
-
-	return table
+	return _generate_phase_table(
+		ThistlethwaiteCoordinates.get_phase2_coord,
+		ThistlethwaiteCoordinates.G2_TURNS,
+		29400,
+		"G2 → G3",
+	)
 
 
 ## Generates the G3 lookup table.[br][br]
@@ -192,45 +85,63 @@ func generate_phase2_table() -> Dictionary:
 ##
 ## Returns a [Dictionary] mapping edge and corner permutation coordinates to search depth.
 func generate_phase3_table() -> Dictionary:
+	return _generate_phase_table(
+		ThistlethwaiteCoordinates.get_phase3_coord,
+		ThistlethwaiteCoordinates.G3_TURNS,
+		663552,
+		"G3 → G4",
+	)
+
+
+## Generates a phase table using BFS.[br][br]
+##
+## [param coord_func]: A [Callable] that takes a [RubiksCubeState] and returns its coordinate.[br]
+## [param valid_turns]: Array of allowed turn strings for this phase.[br]
+## [param expected_size]: Expected number of states (for progress display).[br]
+## [param phase_name]: Display name for the phase (e.g., "G0 → G1").[br][br]
+##
+## Returns a [Dictionary] mapping coordinates to minimum search depth.
+func _generate_phase_table(coord_func: Callable, valid_turns: Array[String], expected_size: int, phase_name: String) -> Dictionary:
 	var table: Dictionary = { }
 	var queue: Array[RubiksCubeState] = []
 
 	# start from solved state
 	var solved_state := RubiksCubeState.new()
-	var solved_coord := ThistlethwaiteCoordinates.get_phase3_coord(solved_state)
+	var solved_coord: int = coord_func.call(solved_state)
 
 	table[solved_coord] = 0
 	queue.push_back(solved_state)
 
-	# only allow turns that preserve edge orientation
-	var valid_turns: Array[String] = ThistlethwaiteCoordinates.G3_TURNS
-
-	print_rich("[b]Generating[/b] G3 → G4 table...")
+	print_rich("[b]Generating[/b] %s table..." % phase_name)
 	var start_time := Time.get_ticks_msec()
 
-	# BFS explore all reachable states level by level
+	# determine progress interval based on expected size
+	var progress_interval := 100 if expected_size < 10000 else (1000 if expected_size < 100000 else 10000)
+
+	# BFS: explore all reachable states level by level
 	while not queue.is_empty():
 		var current_state: RubiksCubeState = queue[0]
 		queue.remove_at(0)
-		var current_coord := ThistlethwaiteCoordinates.get_phase3_coord(current_state)
+		var current_coord: int = coord_func.call(current_state)
 		var current_depth: int = table[current_coord]
 
-		# try all turns from current state
+		# try all turns from the current state
 		for turn in valid_turns:
 			var next_state := current_state.copy()
 			next_state.apply_turn(turn)
-			var next_coord := ThistlethwaiteCoordinates.get_phase3_coord(next_state)
+			var next_coord: int = coord_func.call(next_state)
 
 			# record new state if not seen before
 			if not table.has(next_coord):
 				table[next_coord] = current_depth + 1
 				queue.push_back(next_state)
 
-				if table.size() % 1000 == 0:
-					print("%d states found (%0.1f%%)" % [table.size(), table.size() / 663552.0 * 100])
+				if table.size() % progress_interval == 0:
+					print("%d states found (%0.1f%%)" % [table.size(), table.size() / float(expected_size) * 100])
 
-	print_rich("G3 → G4 table [b]completed[/b] in [b]%d[/b]ms!" % (Time.get_ticks_msec() - start_time))
-	print("Size: %d states" % table.size())
+	print_rich("%s table completed in [b]%dms[/b]!" % [phase_name, Time.get_ticks_msec() - start_time])
+	print_rich("Size: [b]%d states[/b]" % table.size())
+	print_rich("Max depth: [b]%d turns[/b]\n" % _get_max_depth(table))
 
 	return table
 

@@ -31,7 +31,7 @@ func solve_phase1(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 
 ## Generic greedy search for phases 0 and 1.[br][br]
 ##
-## Repeatedly selects the first move that reduces the coordinate depth by 1.
+## Repeatedly selects the first turn that reduces the coordinate depth by 1.
 func _greedy_search(state: RubiksCubeState, table: Dictionary, coord_func: Callable, valid_turns: Array[String]) -> Array[String]:
 	var solution_turns: Array[String] = []
 	var current_state := state.copy()
@@ -50,7 +50,7 @@ func _greedy_search(state: RubiksCubeState, table: Dictionary, coord_func: Calla
 			var new_coord: int = coord_func.call(test_state)
 			var new_depth: int = table.get(new_coord, -1)
 
-			# greedy: take first move that reduces depth (local optimum)
+			# greedy: take first turn that reduces depth (local optimum)
 			if new_depth == current_depth - 1:
 				solution_turns.push_back(turn)
 				current_state = test_state

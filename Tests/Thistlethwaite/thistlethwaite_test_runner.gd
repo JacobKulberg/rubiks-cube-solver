@@ -29,18 +29,18 @@ static func run() -> void:
 
 		var file := FileAccess.open("res://Tests/Scrambles/%s" % file_name, FileAccess.READ)
 
-		var scramble_moves := file.get_as_text().strip_edges().split(" ")
+		var scramble_turns := file.get_as_text().strip_edges().split(" ")
 		file.close()
 
 		var test_state := solved_state.copy()
 
-		for move in scramble_moves:
-			test_state.apply_turn(move)
+		for turn in scramble_turns:
+			test_state.apply_turn(turn)
 
 		var solution_turns := ThistlethwaiteSolver.new(false).solve(test_state)
 		var final_state := test_state.copy()
-		for move in solution_turns:
-			final_state.apply_turn(move)
+		for turn in solution_turns:
+			final_state.apply_turn(turn)
 
 		var elapsed := Time.get_ticks_msec() - now
 		if final_state.to_hash() == solved_state.to_hash():
@@ -68,9 +68,9 @@ static func run() -> void:
 		var suffixes: Array[String] = ["", "'", "2"]
 		var scramble_moves: Array[String] = []
 		for j in range(50):
-			var move: String = faces.pick_random() + suffixes.pick_random()
-			scramble_moves.push_back(move)
-			random_state.apply_turn(move)
+			var turn: String = faces.pick_random() + suffixes.pick_random()
+			scramble_moves.push_back(turn)
+			random_state.apply_turn(turn)
 
 		total_scrambles += 1
 
@@ -79,8 +79,8 @@ static func run() -> void:
 
 		var solution_turns := ThistlethwaiteSolver.new(false).solve(random_state)
 		var final_state := random_state.copy()
-		for move in solution_turns:
-			final_state.apply_turn(move)
+		for turn in solution_turns:
+			final_state.apply_turn(turn)
 
 		var elapsed := Time.get_ticks_msec() - now
 		if final_state.to_hash() == solved_state.to_hash():

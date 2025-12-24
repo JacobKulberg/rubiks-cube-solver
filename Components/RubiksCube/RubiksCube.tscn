@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bfr1qkn44va13"]
+[gd_scene load_steps=7 format=3 uid="uid://bfr1qkn44va13"]
 
 [ext_resource type="PackedScene" uid="uid://dc0q0he6w46pm" path="res://Components/Pieces/Cubelet/Cubelet.tscn" id="1_j6lqm"]
 [ext_resource type="Script" uid="uid://cief3qpcy5e54" path="res://Components/RubiksCube/rubiks_cube.gd" id="1_xlehq"]
@@ -6,8 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://bovneab7ctpkx" path="res://Components/Pieces/EdgePiece/EdgePiece.tscn" id="3_o1446"]
 [ext_resource type="PackedScene" uid="uid://bnfsmi0hrxv5t" path="res://Components/Pieces/CornerPiece/CornerPiece.tscn" id="4_an5dc"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_cube"]
+size = Vector3(3, 3, 3)
+
 [node name="RubiksCube" type="Node3D"]
 script = ExtResource("1_xlehq")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_cube")
 
 [node name="Pieces" type="Node3D" parent="."]
 

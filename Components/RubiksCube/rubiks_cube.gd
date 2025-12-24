@@ -19,6 +19,14 @@ extends Node3D
 var is_dragging := false
 ## Last mouse position during drag.
 var last_mouse_position := Vector2.ZERO
+## Whether the mouse is currently hovering over the cube.
+var is_hovering := false
+## Current hover scale bonus (0.0 when not hovering, 0.05 when hovering).
+var hover_scale := 0.0
+## Tween for hover scale animation.
+var hover_tween: Tween
+## Current pulse scale bonus from click animation.
+var pulse_scale := 0.0
 ## Helper that manages turn queuing, animation, and undo logic.
 var turn_helper: RubiksCubeTurnHelper
 ## Logical state of the cube.
@@ -36,6 +44,12 @@ func _ready() -> void:
 	thistlethwaite_solver = ThistlethwaiteSolver.new()
 
 
+## Updates cube scale based on hover and pulse bonuses.
+func _process(_delta: float) -> void:
+	_update_hover_state()
+	_apply_scale()
+
+
 ## Returns cube to neutral rotation when not being dragged.
 func _physics_process(delta: float) -> void:
 	if not is_dragging:
@@ -44,22 +58,29 @@ func _physics_process(delta: float) -> void:
 
 
 ## Handles input for triggering random turns or undo operations.
-## LMB: queue random turn
-## RMB: undo last turn
+## LMB on cube: queue random turn
+## RMB on cube: undo last turn
+## MMB: drag to rotate cube
+## SPACE: solve cube and print solution
+## B: regenerate Thistlethwaite tables
+## P: print current cube state
+## T: run Thistlethwaite tests
 func _input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
 	if mouse_event and mouse_event.pressed:
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			# TODO: this is only random temporarily
-			var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
-			var suffixes: Array[String] = ["", "'", "2"]
-			turn_helper.queue_turn(faces.pick_random() + suffixes.pick_random())
+			if _is_mouse_over_cube(mouse_event.position):
+				# TODO: this is only random temporarily
+				var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
+				var suffixes: Array[String] = ["", "'", "2"]
+				turn_helper.queue_turn(faces.pick_random() + suffixes.pick_random())
 
-			_pulse_scale()
+				_pulse_scale()
 		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT:
-			turn_helper.undo_last_turn()
+			if _is_mouse_over_cube(mouse_event.position):
+				turn_helper.undo_last_turn()
 
-			_pulse_scale()
+				_pulse_scale()
 		elif mouse_event.button_index == MOUSE_BUTTON_MIDDLE:
 			is_dragging = true
 			last_mouse_position = mouse_event.position
@@ -108,10 +129,60 @@ func execute_algorithm(turns: String) -> void:
 		turn_helper.queue_turn(turn, true, true)
 
 
+## Checks if mouse position is over the cube using raycast.
+func _is_mouse_over_cube(mouse_position: Vector2) -> bool:
+	var from := camera.project_ray_origin(mouse_position)
+	var to := from + camera.project_ray_normal(mouse_position) * 1000.0
+
+	var space_state := get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = true
+	query.collide_with_bodies = true
+
+	var result := space_state.intersect_ray(query)
+	if result:
+		# check if the hit object is part of the cube
+		var collider: Node3D = result.get("collider")
+
+		if collider:
+			var parent := collider
+
+			while parent:
+				if parent == self:
+					return true
+
+				parent = parent.get_parent()
+
+	return false
+
+
+## Updates hover state and animates hover scale when it changes.
+func _update_hover_state() -> void:
+	var mouse_pos := get_viewport().get_mouse_position()
+	var hovering := _is_mouse_over_cube(mouse_pos)
+
+	if hovering != is_hovering:
+		is_hovering = hovering
+
+		if hover_tween:
+			hover_tween.kill()
+
+		hover_tween = create_tween()
+		hover_tween.set_ease(Tween.EASE_OUT)
+		hover_tween.set_trans(Tween.TRANS_CUBIC)
+		hover_tween.tween_property(self, "hover_scale", 0.05 if is_hovering else 0.0, 0.15)
+
+
+## Applies the combined hover and pulse scale to the cube.
+func _apply_scale() -> void:
+	var total_scale := 1.0 + hover_scale + pulse_scale
+	scale = Vector3.ONE * total_scale
+
+
 ## Plays a brief, pulsing scale animation when the cube is interacted with.
 func _pulse_scale() -> void:
-	var scale_tween := create_tween()
-	scale_tween.set_ease(Tween.EASE_OUT)
-	scale_tween.set_trans(Tween.TRANS_CUBIC)
-	scale_tween.tween_property(self, "scale", Vector3.ONE * 1.125, 0.05) # magic numbers but whatev
-	scale_tween.tween_property(self, "scale", Vector3.ONE, 0.1)
+	var pulse_tween := create_tween()
+	pulse_tween.set_ease(Tween.EASE_OUT)
+	pulse_tween.set_trans(Tween.TRANS_CUBIC)
+	pulse_tween.tween_property(self, "pulse_scale", 0.125, 0.05)
+	pulse_tween.tween_property(self, "pulse_scale", 0.0, 0.1)

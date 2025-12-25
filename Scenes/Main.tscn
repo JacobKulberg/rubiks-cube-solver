@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cpbx02m5ghkbh"]
+[gd_scene load_steps=6 format=3 uid="uid://cpbx02m5ghkbh"]
 
 [ext_resource type="PackedScene" uid="uid://bfr1qkn44va13" path="res://Components/RubiksCube/RubiksCube.tscn" id="1_r150o"]
+[ext_resource type="PackedScene" uid="uid://c2e2txf2ll6ds" path="res://UI/UI.tscn" id="2_idj7w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_glv2v"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -27,3 +28,8 @@ transform = Transform3D(0.7071068, -0.40860704, 0.5770964, 0, 0.8161376, 0.57785
 projection = 1
 current = true
 size = 9.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="UI" parent="CanvasLayer" instance=ExtResource("2_idj7w")]
+mouse_filter = 2

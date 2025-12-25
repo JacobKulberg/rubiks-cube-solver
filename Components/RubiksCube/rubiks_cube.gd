@@ -39,6 +39,7 @@ var thistlethwaite_solver: ThistlethwaiteSolver
 
 
 func _ready() -> void:
+	# initialize components
 	turn_helper = RubiksCubeTurnHelper.new(self)
 	state = RubiksCubeState.new()
 	thistlethwaite_solver = ThistlethwaiteSolver.new()
@@ -57,64 +58,36 @@ func _physics_process(delta: float) -> void:
 		rotation.z = lerpf(rotation.z, 0.0, delta * 3.0)
 
 
-## Handles input for triggering random turns or undo operations.
-## LMB on cube: queue random turn
-## RMB on cube: undo last turn
-## MMB: drag to rotate cube
-## SPACE: solve cube and print solution
-## B: regenerate Thistlethwaite tables
-## P: print current cube state
-## T: run Thistlethwaite tests
+## Handles all user input.
 func _input(event: InputEvent) -> void:
-	var mouse_event := event as InputEventMouseButton
-	if mouse_event and mouse_event.pressed:
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			if _is_mouse_over_cube(mouse_event.position):
-				# TODO: this is only random temporarily
-				var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
-				var suffixes: Array[String] = ["", "'", "2"]
-				turn_helper.queue_turn(faces.pick_random() + suffixes.pick_random())
-
-				_pulse_scale()
-		elif mouse_event.button_index == MOUSE_BUTTON_RIGHT:
-			if _is_mouse_over_cube(mouse_event.position):
-				turn_helper.undo_last_turn()
-
-				_pulse_scale()
-		elif mouse_event.button_index == MOUSE_BUTTON_MIDDLE:
-			is_dragging = true
-			last_mouse_position = mouse_event.position
-	elif mouse_event and not mouse_event.pressed:
-		if mouse_event.button_index == MOUSE_BUTTON_MIDDLE:
-			is_dragging = false
+	var mouse_button_event := event as InputEventMouseButton
+	_handle_mouse_button_event(mouse_button_event)
 
 	var mouse_motion_event := event as InputEventMouseMotion
-	if mouse_motion_event and is_dragging:
-		var delta := mouse_motion_event.position - last_mouse_position
-		last_mouse_position = mouse_motion_event.position
-
-		rotate(camera.global_transform.basis.y, delta.x * rotation_sensitivity)
-		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
+	_handle_mouse_motion_event(mouse_motion_event)
 
 	var key_event := event as InputEventKey
-	if key_event and key_event.is_pressed():
-		match key_event.keycode:
-			KEY_SPACE:
-				var solution := thistlethwaite_solver.solve(get_current_state())
-				print("Solution: ", " ".join(solution))
-				execute_algorithm(" ".join(solution))
-			KEY_B:
-				ThistlethwaiteTableGenerator.new().generate_all_tables()
-				thistlethwaite_solver = ThistlethwaiteSolver.new()
-			KEY_P:
-				state.print()
-			KEY_T:
-				ThistlethwaiteTestRunner.run()
+	_handle_key_event(key_event)
 
 
 ## Returns a copy of the current cube state.
 func get_current_state() -> RubiksCubeState:
 	return state.copy()
+
+
+## Solves the cube and prints the solution in standard cube notation.
+func solve() -> void:
+	var solution := thistlethwaite_solver.solve(get_current_state())
+	print("Solution: ", " ".join(solution))
+	execute_algorithm(" ".join(solution))
+
+
+## Builds all Thistlethwaite tables for phases 1 through 4
+func generate_thistlethwaite_tables() -> void:
+	var thistlethwaite_table_generator := ThistlethwaiteTableGenerator.new()
+	thistlethwaite_table_generator.generate_all_tables()
+
+	thistlethwaite_solver = ThistlethwaiteSolver.new()
 
 
 ## Executes a sequence of turns from a space-separated string.
@@ -127,6 +100,72 @@ func execute_algorithm(turns: String) -> void:
 	var turn_list := turns.split(" ")
 	for turn in turn_list:
 		turn_helper.queue_turn(turn, true, true)
+
+
+## Handles all mouse clicking events.
+func _handle_mouse_button_event(event: InputEventMouseButton) -> void:
+	if not event:
+		return
+
+	if event.pressed:
+		match event.button_index:
+			MOUSE_BUTTON_LEFT:
+				if _is_mouse_over_cube(event.position):
+					_turn_random_face()
+			MOUSE_BUTTON_RIGHT:
+				if _is_mouse_over_cube(event.position):
+					_undo_last_turn()
+			MOUSE_BUTTON_MIDDLE:
+				is_dragging = true
+				last_mouse_position = event.position
+	elif event.button_index == MOUSE_BUTTON_MIDDLE:
+		is_dragging = false
+
+
+## Handles all mouse motion events.
+func _handle_mouse_motion_event(event: InputEventMouseMotion) -> void:
+	if not event:
+		return
+
+	if is_dragging:
+		var delta := event.position - last_mouse_position
+		last_mouse_position = event.position
+
+		rotate(camera.global_transform.basis.y, delta.x * rotation_sensitivity)
+		rotate(camera.global_transform.basis.x, delta.y * rotation_sensitivity)
+
+
+## Handles all keyboard events.
+func _handle_key_event(event: InputEventKey) -> void:
+	if not event:
+		return
+
+	if event.is_pressed():
+		match event.keycode:
+			KEY_SPACE:
+				solve()
+			KEY_B:
+				generate_thistlethwaite_tables()
+			KEY_P:
+				state.print()
+			KEY_T:
+				ThistlethwaiteTestRunner.run()
+
+
+## Turns a random face on the cube clockwise, counterclockwise, or 180 degrees.
+func _turn_random_face() -> void:
+	var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
+	var suffixes: Array[String] = ["", "'", "2"]
+	turn_helper.queue_turn(faces.pick_random() + suffixes.pick_random())
+
+	_pulse_scale()
+
+
+## Undoes the last turn made.
+func _undo_last_turn() -> void:
+	turn_helper.undo_last_turn()
+
+	_pulse_scale()
 
 
 ## Checks if mouse position is over the cube using raycast.
@@ -164,6 +203,11 @@ func _update_hover_state() -> void:
 	if hovering != is_hovering:
 		is_hovering = hovering
 
+		if is_hovering:
+			Input.set_default_cursor_shape(Input.CURSOR_POINTING_HAND)
+		else:
+			Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
 		if hover_tween:
 			hover_tween.kill()
 
@@ -184,5 +228,5 @@ func _pulse_scale() -> void:
 	var pulse_tween := create_tween()
 	pulse_tween.set_ease(Tween.EASE_OUT)
 	pulse_tween.set_trans(Tween.TRANS_CUBIC)
-	pulse_tween.tween_property(self, "pulse_scale", 0.125, 0.05)
+	pulse_tween.tween_property(self, "pulse_scale", -0.125, 0.05)
 	pulse_tween.tween_property(self, "pulse_scale", 0.0, 0.1)

@@ -21,9 +21,18 @@ gdscript/warnings/untyped_declaration=2
 gdscript/warnings/integer_division=0
 gdscript/warnings/confusable_local_declaration=0
 
+[display]
+
+window/size/initial_position_type=4
+window/stretch/mode="canvas_items"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gdscript_formatter/plugin.cfg")
+
+[gui]
+
+common/snap_controls_to_pixels=false
 
 [physics]
 

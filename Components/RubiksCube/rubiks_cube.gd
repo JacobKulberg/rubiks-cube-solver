@@ -77,9 +77,24 @@ func get_current_state() -> RubiksCubeState:
 
 ## Solves the cube and prints the solution in standard cube notation.
 func solve() -> void:
+	if turn_helper.is_turning:
+		return
+
 	var solution := thistlethwaite_solver.solve(get_current_state())
 	print("Solution: ", " ".join(solution))
 	execute_algorithm(" ".join(solution))
+
+
+## Scrambles the cube by performing 50 random turns.
+func scramble() -> void:
+	var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
+	var suffixes: Array[String] = ["", "'", "2"]
+	var scramble_moves: Array[String] = []
+	for j in range(50):
+		var turn: String = faces.pick_random() + suffixes.pick_random()
+		scramble_moves.push_back(turn)
+	var scramble_str := " ".join(scramble_moves)
+	execute_algorithm(scramble_str)
 
 
 ## Builds all Thistlethwaite tables for phases 1 through 4

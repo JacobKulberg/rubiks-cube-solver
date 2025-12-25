@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c2e2txf2ll6ds"]
+[gd_scene load_steps=3 format=3 uid="uid://c2e2txf2ll6ds"]
 
 [ext_resource type="PackedScene" uid="uid://c6topsrxs6lpm" path="res://UI/SolveButton/SolveButton.tscn" id="1_6dd3c"]
+[ext_resource type="PackedScene" uid="uid://bonuk2nfrw3cy" path="res://UI/ScrambleButton/ScrambleButton.tscn" id="2_dhe1o"]
 
 [node name="UI" type="Control"]
 layout_mode = 3
@@ -10,16 +11,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SolveButton" parent="." instance=ExtResource("1_6dd3c")]
+[node name="ButtonContainer" type="Control" parent="."]
 layout_mode = 1
-anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -82.0
-offset_top = -98.0
-offset_right = 82.0
-offset_bottom = -23.0
+offset_left = -207.0
+offset_top = -100.0
 grow_horizontal = 2
 grow_vertical = 0
+
+[node name="SolveButton" parent="ButtonContainer" instance=ExtResource("1_6dd3c")]
+layout_mode = 0
+
+[node name="ScrambleButton" parent="ButtonContainer" instance=ExtResource("2_dhe1o")]
+layout_mode = 0
+offset_left = 170.0
+offset_right = 414.0

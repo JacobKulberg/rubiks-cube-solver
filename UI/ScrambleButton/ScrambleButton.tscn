@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c6topsrxs6lpm"]
+[gd_scene load_steps=3 format=3 uid="uid://bonuk2nfrw3cy"]
 
-[ext_resource type="Script" uid="uid://dfi6250nxdrlf" path="res://UI/SolveButton/solve_button.gd" id="1_d1pb6"]
+[ext_resource type="Script" uid="uid://bqb6pxsnvrwd2" path="res://UI/ScrambleButton/scramble_button.gd" id="1_sh4uv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_15qgc"]
 bg_color = Color(0.9411765, 0.9411765, 0.9411765, 1)
@@ -14,13 +14,13 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="SolveButton" type="PanelContainer"]
-offset_right = 150.0
+[node name="ScrambleButton" type="PanelContainer"]
+offset_right = 164.0
 offset_bottom = 75.0
-pivot_offset = Vector2(75, 37.5)
+pivot_offset = Vector2(122, 37.5)
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_15qgc")
-script = ExtResource("1_d1pb6")
+script = ExtResource("1_sh4uv")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -31,7 +31,7 @@ theme_override_constants/margin_right = 10
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 48
-text = "Solve"
+text = "Scramble"
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

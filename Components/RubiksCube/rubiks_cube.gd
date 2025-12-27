@@ -27,13 +27,14 @@ var hover_scale := 0.0
 var hover_tween: Tween
 ## Current pulse scale bonus from click animation.
 var pulse_scale := 0.0
+## The current manual turn the user is typing.
+var current_manual_turn: String
 ## Helper that manages turn queuing, animation, and undo logic.
 var turn_helper: RubiksCubeTurnHelper
 ## Logical state of the cube.
 var state: RubiksCubeState
 ## Thistlethwaite's Algorithm solver instance.
 var thistlethwaite_solver: ThistlethwaiteSolver
-var current_manual_turn: String
 
 ## Reference to main camera node
 @onready var camera: Camera3D = get_node("../Camera3D") as Camera3D
@@ -43,6 +44,8 @@ var current_manual_turn: String
 @onready var solution_text: Label = get_tree().get_first_node_in_group("solution_text") as Label
 ## Reference to the current manual turn label
 @onready var current_manual_turn_text: Label = get_tree().get_first_node_in_group("current_manual_turn_text") as Label
+## Reference to the random turn label
+@onready var random_turn_text: Label = get_tree().get_first_node_in_group("random_turn_text") as Label
 
 
 func _ready() -> void:
@@ -127,6 +130,7 @@ func generate_thistlethwaite_tables() -> void:
 ## Executes a sequence of turns from a space-separated string.
 func execute_algorithm(turns: String) -> void:
 	current_manual_turn = ""
+	random_turn_text.text = ""
 
 	turns = turns.strip_edges()
 
@@ -187,7 +191,10 @@ func _handle_key_event(event: InputEventKey) -> void:
 		KEY_T:
 			ThistlethwaiteTestRunner.run()
 		KEY_BACKSPACE:
-			_undo_last_turn()
+			if not current_manual_turn.is_empty():
+				current_manual_turn = current_manual_turn.substr(0, current_manual_turn.length() - 1)
+			else:
+				_undo_last_turn()
 		KEY_R:
 			execute_algorithm(current_manual_turn)
 			current_manual_turn = "R"
@@ -223,6 +230,7 @@ func _handle_key_event(event: InputEventKey) -> void:
 
 	scramble_text.text = ""
 	solution_text.text = ""
+	random_turn_text.text = ""
 	current_manual_turn_text.text = current_manual_turn
 
 
@@ -230,12 +238,16 @@ func _handle_key_event(event: InputEventKey) -> void:
 func _turn_random_face() -> void:
 	var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 	var suffixes: Array[String] = ["", "'", "2"]
-	turn_helper.queue_turn(faces.pick_random() + suffixes.pick_random())
+	var turn: String = faces.pick_random() + suffixes.pick_random()
+	turn_helper.queue_turn(turn)
 
 	_pulse_scale()
 
 	scramble_text.text = ""
 	solution_text.text = ""
+	current_manual_turn = ""
+	current_manual_turn_text.text = ""
+	random_turn_text.text = turn
 
 
 ## Undoes the last turn made.
@@ -246,6 +258,7 @@ func _undo_last_turn() -> void:
 
 	scramble_text.text = ""
 	solution_text.text = ""
+	random_turn_text.text = ""
 
 
 ## Checks if mouse position is over the cube using raycast.

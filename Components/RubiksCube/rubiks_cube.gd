@@ -33,6 +33,7 @@ var turn_helper: RubiksCubeTurnHelper
 var state: RubiksCubeState
 ## Thistlethwaite's Algorithm solver instance.
 var thistlethwaite_solver: ThistlethwaiteSolver
+var current_manual_turn: String
 
 ## Reference to main camera node
 @onready var camera: Camera3D = get_node("../Camera3D") as Camera3D
@@ -40,6 +41,8 @@ var thistlethwaite_solver: ThistlethwaiteSolver
 @onready var scramble_text: Label = get_tree().get_first_node_in_group("scramble_text") as Label
 ## Reference to the solution label
 @onready var solution_text: Label = get_tree().get_first_node_in_group("solution_text") as Label
+## Reference to the current manual turn label
+@onready var current_manual_turn_text: Label = get_tree().get_first_node_in_group("current_manual_turn_text") as Label
 
 
 func _ready() -> void:
@@ -123,6 +126,8 @@ func generate_thistlethwaite_tables() -> void:
 
 ## Executes a sequence of turns from a space-separated string.
 func execute_algorithm(turns: String) -> void:
+	current_manual_turn = ""
+
 	turns = turns.strip_edges()
 
 	if turns.is_empty():
@@ -171,16 +176,54 @@ func _handle_key_event(event: InputEventKey) -> void:
 	if not event:
 		return
 
-	if event.is_pressed():
-		match event.keycode:
-			KEY_SPACE:
-				solve()
-			KEY_B:
-				generate_thistlethwaite_tables()
-			KEY_P:
-				state.print()
-			KEY_T:
-				ThistlethwaiteTestRunner.run()
+	if not event.is_pressed():
+		return
+
+	match event.keycode:
+		KEY_SPACE:
+			solve()
+		KEY_P:
+			state.print()
+		KEY_T:
+			ThistlethwaiteTestRunner.run()
+		KEY_BACKSPACE:
+			_undo_last_turn()
+		KEY_R:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "R"
+		KEY_U:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "U"
+		KEY_F:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "F"
+		KEY_L:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "L"
+		KEY_D:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "D"
+		KEY_B:
+			execute_algorithm(current_manual_turn)
+			current_manual_turn = "B"
+		KEY_APOSTROPHE:
+			if current_manual_turn.length() == 2 and current_manual_turn[1] == "'":
+				current_manual_turn = current_manual_turn[0]
+			else:
+				current_manual_turn = current_manual_turn[0] + "'"
+		KEY_2:
+			if current_manual_turn.length() == 2 and current_manual_turn[1] == "2":
+				current_manual_turn = current_manual_turn[0]
+			else:
+				current_manual_turn = current_manual_turn[0] + "2"
+		KEY_ENTER:
+			execute_algorithm(current_manual_turn)
+		_:
+			return
+
+	scramble_text.text = ""
+	solution_text.text = ""
+	current_manual_turn_text.text = current_manual_turn
 
 
 ## Turns a random face on the cube clockwise, counterclockwise, or 180 degrees.

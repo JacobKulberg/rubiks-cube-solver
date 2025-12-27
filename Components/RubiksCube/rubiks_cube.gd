@@ -36,6 +36,10 @@ var thistlethwaite_solver: ThistlethwaiteSolver
 
 ## Reference to main camera node
 @onready var camera: Camera3D = get_node("../Camera3D") as Camera3D
+## Reference to the scramble label
+@onready var scramble_text: Label = get_tree().get_first_node_in_group("scramble_text") as Label
+## Reference to the solution label
+@onready var solution_text: Label = get_tree().get_first_node_in_group("solution_text") as Label
 
 
 func _ready() -> void:
@@ -81,20 +85,32 @@ func solve() -> void:
 		return
 
 	var solution := thistlethwaite_solver.solve(get_current_state())
-	print("Solution: ", " ".join(solution))
-	execute_algorithm(" ".join(solution))
+	var solution_str := " ".join(solution)
+	print("Solution: ", solution_str)
+	execute_algorithm(solution_str)
+
+	solution_text.text = solution_str
 
 
 ## Scrambles the cube by performing 50 random turns.
 func scramble() -> void:
+	if turn_helper.is_turning:
+		return
+
 	var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 	var suffixes: Array[String] = ["", "'", "2"]
 	var scramble_moves: Array[String] = []
 	for j in range(50):
 		var turn: String = faces.pick_random() + suffixes.pick_random()
 		scramble_moves.push_back(turn)
+
+	thistlethwaite_solver.reduce_redundant_turns(scramble_moves)
+
 	var scramble_str := " ".join(scramble_moves)
+	print("Scramble: ", scramble_str)
 	execute_algorithm(scramble_str)
+
+	scramble_text.text = scramble_str
 
 
 ## Builds all Thistlethwaite tables for phases 1 through 4
@@ -175,12 +191,18 @@ func _turn_random_face() -> void:
 
 	_pulse_scale()
 
+	scramble_text.text = ""
+	solution_text.text = ""
+
 
 ## Undoes the last turn made.
 func _undo_last_turn() -> void:
 	turn_helper.undo_last_turn()
 
 	_pulse_scale()
+
+	scramble_text.text = ""
+	solution_text.text = ""
 
 
 ## Checks if mouse position is over the cube using raycast.

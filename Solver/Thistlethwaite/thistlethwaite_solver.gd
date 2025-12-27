@@ -52,11 +52,11 @@ func solve(state: RubiksCubeState) -> Array[String]:
 	all_turns.append_array(phase1_turns)
 	all_turns.append_array(phase2_turns)
 	all_turns.append_array(phase3_turns)
-	_reduce_redundant_turns(all_turns)
+	reduce_redundant_turns(all_turns)
 	return all_turns
 
 
-func _reduce_redundant_turns(turns: Array[String]) -> void:
+func reduce_redundant_turns(turns: Array[String]) -> void:
 	var i := 0
 	while i < turns.size() - 1:
 		if turns[i][0] != turns[i + 1][0]:

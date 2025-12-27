@@ -109,7 +109,7 @@ Print Cube State (P)
 Run Unit Tests (T)
 Solve Cube (Space)
 Turn Cube (R, U, F, L, D, B)
-More Turn Options (', 2)
+More Turn Options (', 2, Backspace)
 Confirm Turn (Enter)"
 vertical_alignment = 1
 autowrap_mode = 3

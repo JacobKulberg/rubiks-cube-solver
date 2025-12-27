@@ -185,7 +185,15 @@ func _handle_key_event(event: InputEventKey) -> void:
 
 	match event.keycode:
 		KEY_SPACE:
+			scramble_text.text = ""
+			solution_text.text = ""
+			random_turn_text.text = ""
+			current_manual_turn = ""
+			current_manual_turn_text.text = ""
+
 			solve()
+
+			return
 		KEY_P:
 			state.print()
 		KEY_T:

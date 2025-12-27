@@ -89,3 +89,27 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 20
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="Hints" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -138.0
+offset_right = 1010.0
+offset_bottom = 138.0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.3779188, 0.37791887, 0.37791884, 1)
+theme_override_font_sizes/font_size = 20
+text = "Random Turn (LMB)
+Undo Last Turn (RMB)
+Rotate Cube (MMB)
+Print Cube State (P)
+Run Unit Tests (T)
+Solve Cube (Space)
+Turn Cube (R, U, F, L, D, B)
+More Turn Options (', 2)
+Confirm Turn (Enter)"
+vertical_alignment = 1
+autowrap_mode = 3

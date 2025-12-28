@@ -6,7 +6,7 @@ An interactive Rubik's cube solver and visualization using Thistlethwaite's algo
 
 ## Turn Notation
 All turns are made with respect to:
-p- White on U (Y+)
+- White on U (Y+)
 - Green on F (X-)
 - Red on R (Z+)
 
@@ -73,13 +73,13 @@ The number of turns taken and the time taken to solve each scramble are printed 
 ![](Images/tests.png)
 
 ## References
-https://en.wikipedia.org/wiki/Optimal_solutions_for_the_Rubik%27s_Cube:
+https://en.wikipedia.org/wiki/Optimal_solutions_for_the_Rubik%27s_Cube
 - Overview of Rubik's cube solving algorithms and optimal solutions.
 
-https://www.jaapsch.net/puzzles/thistle.htm:
+https://www.jaapsch.net/puzzles/thistle.htm
 - Explanation of Thistlethwaite's algorithm and cube representation.
 
-https://puzzling.stackexchange.com/a/101271
-https://puzzling.stackexchange.com/a/109429
+https://puzzling.stackexchange.com/a/101271 \
+https://puzzling.stackexchange.com/a/109429 \
 https://tomas.rokicki.com/cubecontest/jaap.txt
 - Additional insight into tetrad twists in Thistlethwaite's algorithm and how they are calculated.

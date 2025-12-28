@@ -98,7 +98,7 @@ func solve_phase3(state: RubiksCubeState, table: Dictionary) -> Array[String]:
 
 ## Performs an iterative deepening depth-first search to find a solution for phase G2.[br][br]
 ##
-## Searches for a sequence of G2-legal moves that reduces the cube from G2 to G3 by correctly
+## Searches for a sequence of G2-legal turns that reduces the cube from G2 to G3 by correctly
 ## placing E- and S-slice edges, placing corners in their correct tetrads, fixing edge parity,
 ## and resolving each tetrad's twist.[br][br]
 ##
@@ -137,7 +137,7 @@ func _search_phase2_iddfs(state: RubiksCubeState, table: Dictionary, depth: int,
 
 ## Performs an iterative deepening depth-first search to find a solution for phase G3.[br][br]
 ##
-## Searches for a sequence of G3-legal moves that reduces the cube from G3 to G4 by correctly
+## Searches for a sequence of G3-legal turns that reduces the cube from G3 to G4 by correctly
 ## permuting edges and corners.[br][br]
 ##
 ## [param state]: Current cube state[br]

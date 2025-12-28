@@ -105,14 +105,14 @@ func scramble() -> void:
 
 	var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 	var suffixes: Array[String] = ["", "'", "2"]
-	var scramble_moves: Array[String] = []
+	var scramble_turns: Array[String] = []
 	for j in range(50):
 		var turn: String = faces.pick_random() + suffixes.pick_random()
-		scramble_moves.push_back(turn)
+		scramble_turns.push_back(turn)
 
-	thistlethwaite_solver.reduce_redundant_turns(scramble_moves)
+	thistlethwaite_solver.reduce_redundant_turns(scramble_turns)
 
-	var scramble_str := " ".join(scramble_moves)
+	var scramble_str := " ".join(scramble_turns)
 	print("Scramble: ", scramble_str)
 	execute_algorithm(scramble_str)
 

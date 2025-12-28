@@ -66,10 +66,10 @@ static func run() -> void:
 		var random_state := solved_state.copy()
 		var faces: Array[String] = ["R", "L", "U", "D", "F", "B"]
 		var suffixes: Array[String] = ["", "'", "2"]
-		var scramble_moves: Array[String] = []
+		var scramble_turns: Array[String] = []
 		for j in range(50):
 			var turn: String = faces.pick_random() + suffixes.pick_random()
-			scramble_moves.push_back(turn)
+			scramble_turns.push_back(turn)
 			random_state.apply_turn(turn)
 
 		total_scrambles += 1

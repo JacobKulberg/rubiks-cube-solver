@@ -222,15 +222,17 @@ func _handle_key_event(event: InputEventKey) -> void:
 			execute_algorithm(current_manual_turn)
 			current_manual_turn = "B"
 		KEY_APOSTROPHE:
-			if current_manual_turn.length() == 2 and current_manual_turn[1] == "'":
-				current_manual_turn = current_manual_turn[0]
-			else:
-				current_manual_turn = current_manual_turn[0] + "'"
+			if not current_manual_turn.is_empty():
+				if current_manual_turn.length() == 2 and current_manual_turn[1] == "'":
+					current_manual_turn = current_manual_turn[0]
+				else:
+					current_manual_turn = current_manual_turn[0] + "'"
 		KEY_2:
-			if current_manual_turn.length() == 2 and current_manual_turn[1] == "2":
-				current_manual_turn = current_manual_turn[0]
-			else:
-				current_manual_turn = current_manual_turn[0] + "2"
+			if not current_manual_turn.is_empty():
+				if current_manual_turn.length() == 2 and current_manual_turn[1] == "2":
+					current_manual_turn = current_manual_turn[0]
+				else:
+					current_manual_turn = current_manual_turn[0] + "2"
 		KEY_ENTER:
 			execute_algorithm(current_manual_turn)
 		_:

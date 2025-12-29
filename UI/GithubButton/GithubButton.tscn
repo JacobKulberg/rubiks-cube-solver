@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://dg8kuyawjmsnh"]
+
+[ext_resource type="Script" uid="uid://7ii68v4aaagd" path="res://UI/GithubButton/github_button.gd" id="1_g4udk"]
+[ext_resource type="Texture2D" uid="uid://cqaqx3rs0rinp" path="res://UI/GithubButton/github.svg" id="2_g4udk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_15qgc"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="GithubButton" type="PanelContainer"]
+offset_right = 48.0
+offset_bottom = 48.0
+pivot_offset = Vector2(24, 24)
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_15qgc")
+script = ExtResource("1_g4udk")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("2_g4udk")
+stretch_mode = 2
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="RubiksCubeSolver"
+config/name="Rubik's Cube Solver"
 run/main_scene="uid://cpbx02m5ghkbh"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="uid://ccvr3rbx38dpu"

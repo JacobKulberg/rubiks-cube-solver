@@ -123,7 +123,7 @@ offset_top = 16.0
 offset_right = 1136.0
 offset_bottom = 64.0
 
-[node name="AlgorithmDropdown" parent="." instance=ExtResource("4_e707p")]
+[node name="AlgorithmDropdown" parent="." groups=["algorithm_dropdown"] instance=ExtResource("4_e707p")]
 layout_mode = 0
 offset_left = 369.0
 offset_top = 507.0

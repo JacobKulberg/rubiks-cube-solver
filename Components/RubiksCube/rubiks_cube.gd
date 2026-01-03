@@ -46,6 +46,8 @@ var thistlethwaite_solver: ThistlethwaiteSolver
 @onready var current_manual_turn_text: Label = get_tree().get_first_node_in_group("current_manual_turn_text") as Label
 ## Reference to the random turn label
 @onready var random_turn_text: Label = get_tree().get_first_node_in_group("random_turn_text") as Label
+## Reference to algorithm dropdown.
+@onready var algorithm_dropdown: AlgorithmDropdown = get_tree().get_first_node_in_group("algorithm_dropdown") as AlgorithmDropdown
 
 
 func _ready() -> void:
@@ -90,7 +92,17 @@ func solve() -> void:
 	if turn_helper.is_turning:
 		return
 
-	var solution := thistlethwaite_solver.solve(get_current_state())
+	var solution: Array[String] = []
+
+	var algorithm_index := algorithm_dropdown.get_algorithm_index()
+	match algorithm_index:
+		0:
+			# THISTLETHWAITE
+			solution = thistlethwaite_solver.solve(get_current_state())
+		1:
+			# 4-LIST
+			solution = []
+
 	var solution_str := " ".join(solution)
 	print("Solution: ", solution_str)
 	execute_algorithm(solution_str)

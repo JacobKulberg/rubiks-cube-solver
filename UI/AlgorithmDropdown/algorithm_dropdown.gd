@@ -10,6 +10,13 @@ func _ready() -> void:
 	_load_setting()
 
 
+func get_algorithm_index() -> int:
+	var config := ConfigFile.new()
+	config.load(save_file_path)
+	var index: int = config.get_value("Preferences", "selected_algorithm", 0)
+	return index
+
+
 func _on_option_button_item_selected(index: int) -> void:
 	_save_setting(index)
 

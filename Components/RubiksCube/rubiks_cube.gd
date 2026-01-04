@@ -102,6 +102,8 @@ func solve() -> void:
 		1:
 			# 4-LIST
 			solution = []
+			var L := FourListTableGenerator.load_L_table()
+			print(L.size())
 
 	var solution_str := " ".join(solution)
 	print("Solution: ", solution_str)
